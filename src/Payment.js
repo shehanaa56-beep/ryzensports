@@ -256,6 +256,23 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
         </div>
       </div>
 
+      <div className="payment-options">
+        <h2>Select Payment Method</h2>
+
+        <div className="payment-option">
+          <input
+            type="radio"
+            id="upi"
+            name="payment"
+            value="UPI"
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          />
+          <p>UPI</p>
+
+         
+        </div>
+      </div>
+
       <button
         onClick={handlePayment}
         className="pay-btn"
