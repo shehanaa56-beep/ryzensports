@@ -30,7 +30,8 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
   }, []);
 
   // Backend base URL — allow override via env var for flexibility
-  const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+const API_BASE = "https://ryzensports.onrender.com";
+
 
   const itemsToUse = cartItems || contextCartItems;
 
