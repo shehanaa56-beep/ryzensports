@@ -17,6 +17,7 @@ import FAQ from './FAQ';
 import Cart from './Cart';
 import Checkout from './Checkout';
 import OrderHistory from './OrderHistory';
+import OrderHistoryModal from './OrderHistoryModal';
 import AdminDashboard from './AdminDashboard';
 import Wishlist from './Wishlist';
 import CustomerSupport from './CustomerSupport';
@@ -59,6 +60,7 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-history" element={<OrderHistory />} />
+              <Route path="/order-history" element={<OrderHistoryModal />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/customer-support" element={<CustomerSupport />} />

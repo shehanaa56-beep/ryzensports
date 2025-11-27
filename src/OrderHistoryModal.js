@@ -2,32 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { useLogin } from './LoginContext';
 import { db } from './firebase';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import './OrderHistory.css';
+import './OrderHistoryModal.css';
 
-function OrderHistoryModal({ isOpen, onClose }) {
+function OrderHistoryModal() {
   const { user, isLoggedIn } = useLogin();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (isOpen && isLoggedIn && user) {
+    if (isLoggedIn && user) {
       fetchOrderHistory();
     } else {
       setLoading(false);
     }
-  }, [isOpen, isLoggedIn, user]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchOrderHistory = async () => {
     try {
       setLoading(true);
       setError('');
 
-      // Query orders by user email
       const ordersRef = collection(db, 'orders');
       const q = query(
         ordersRef,
         where('userEmail', '==', user.email || user.username),
+        where('status', '==', 'Paid'),
         orderBy('orderDate', 'desc')
       );
 
@@ -75,128 +75,96 @@ function OrderHistoryModal({ isOpen, onClose }) {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="order-history-modal-overlay"
-      onClick={onClose}
-    >
-      <div
-        className="order-history-modal-content"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            background: 'none',
-            border: 'none',
-            fontSize: '24px',
-            cursor: 'pointer',
-            color: '#666',
-            zIndex: 1,
-          }}
-        >
-          ×
-        </button>
-
-        <div className="order-history-container" style={{ margin: 0, padding: '20px', minHeight: 'auto' }}>
-          <div className="order-history-header">
-            <h1>Your Order History</h1>
-            <p className="welcome-message">Welcome back, {user.username || user.email}!</p>
-          </div>
-
-          {!isLoggedIn ? (
-            <div className="login-prompt">
-              <p>Please log in to view your order history.</p>
-            </div>
-          ) : loading ? (
-            <div className="loading">
-              <p>Loading your orders...</p>
-            </div>
-          ) : error ? (
-            <div className="error-message">
-              <p>{error}</p>
-              <button onClick={fetchOrderHistory} className="retry-button">
-                Try Again
-              </button>
-            </div>
-          ) : orders.length === 0 ? (
-            <div className="no-orders">
-              <p>You haven't placed any orders yet.</p>
-              <p>Start shopping to see your order history here!</p>
-            </div>
-          ) : (
-            <div className="orders-list">
-              {orders.map((order) => (
-                <div key={order.id} className="order-card">
-                  <div className="order-header">
-                    <div className="order-info">
-                      <h3>Order #{order.id.slice(-8)}</h3>
-                      <p className="order-date">Placed on {formatDate(order.orderDate)}</p>
-                    </div>
-                    <div
-                      className="order-status"
-                      style={{ backgroundColor: getStatusColor(order.status) }}
-                    >
-                      {order.status || 'Pending'}
-                    </div>
-                  </div>
-
-                  <div className="order-details">
-                    <div className="order-items">
-                      <h4>Items Ordered:</h4>
-                      {order.items && order.items.map((item, index) => (
-                        <div key={index} className="order-item">
-                          <div className="item-info">
-                            <span className="item-name">{item.name}</span>
-                            <span className="item-quantity">Qty: {item.quantity}</span>
-                            <span className="item-price">${item.price?.toFixed(2)}</span>
-                          </div>
-                          {item.size && <span className="item-size">Size: {item.size}</span>}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="order-summary">
-                      <div className="summary-row">
-                        <span>Subtotal:</span>
-                        <span>${order.subtotal?.toFixed(2) || 'N/A'}</span>
-                      </div>
-                      <div className="summary-row">
-                        <span>Shipping:</span>
-                        <span>${order.shipping?.toFixed(2) || '0.00'}</span>
-                      </div>
-                      <div className="summary-row total">
-                        <span>Total:</span>
-                        <span>${order.total?.toFixed(2) || 'N/A'}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {order.shippingAddress && (
-                    <div className="shipping-info">
-                      <h4>Shipping Address:</h4>
-                      <p>{order.shippingAddress}</p>
-                    </div>
-                  )}
-
-                  {order.trackingNumber && (
-                    <div className="tracking-info">
-                      <h4>Tracking Number:</h4>
-                      <p>{order.trackingNumber}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+    <div className="order-history-page" style={{ padding: "20px" }}>
+      
+      <div className="order-history-header">
+        <h1>Your Order History</h1>
+        <p className="welcome-message">Welcome back, {user.username || user.email}!</p>
       </div>
+
+      {!isLoggedIn ? (
+        <div className="login-prompt">
+          <p>Please log in to view your order history.</p>
+        </div>
+      ) : loading ? (
+        <div className="loading">
+          <p>Loading your orders...</p>
+        </div>
+      ) : error ? (
+        <div className="error-message">
+          <p>{error}</p>
+          <button onClick={fetchOrderHistory} className="retry-button">
+            Try Again
+          </button>
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="no-orders">
+          <p>You haven't placed any orders yet.</p>
+          <p>Start shopping to see your order history here!</p>
+        </div>
+      ) : (
+        <div className="orders-list">
+          {orders.map((order) => (
+            <div key={order.id} className="order-card">
+              <div className="order-header">
+                <div className="order-info">
+                  <h3>Order #{order.id.slice(-8)}</h3>
+                  <p className="order-date">Placed on {formatDate(order.orderDate)}</p>
+                </div>
+                <div
+                  className="order-status"
+                  style={{ backgroundColor: getStatusColor(order.status) }}
+                >
+                  {order.status || 'Pending'}
+                </div>
+              </div>
+
+              <div className="order-details">
+                <div className="order-items">
+                  <h4>Items Ordered:</h4>
+                  {order.items && order.items.map((item, index) => (
+                    <div key={index} className="order-item">
+                      <div className="item-info">
+                        <span className="item-name">{item.name}</span>
+                        <span className="item-quantity">Qty: {item.quantity}</span>
+                        <span className="item-price">₹{Number(item.price).toFixed(2)}</span>
+                      </div>
+                      {item.size && <span className="item-size">Size: {item.size}</span>}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="order-summary">
+                  <div className="summary-row">
+                    <span>Subtotal:</span>
+                    <span>₹{Number(order.subtotal).toFixed(2)}</span>
+                  </div>
+
+                  <div className="summary-row total">
+                    <span>Total:</span>
+                    <span>₹{Number(order.total).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {order.shippingAddress && (
+                <div className="shipping-info">
+                  <h4>Shipping Address:</h4>
+                  <p>{order.shippingAddress}</p>
+                </div>
+              )}
+
+              {order.trackingNumber && (
+                <div className="tracking-info">
+                  <h4>Tracking Number:</h4>
+                  <p>{order.trackingNumber}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

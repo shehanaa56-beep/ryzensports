@@ -23,11 +23,11 @@ function OrderHistory() {
       setLoading(true);
       setError('');
 
-      // Query orders by user email
+      // ⭐ ONLY change made: show PAID orders for admin
       const ordersRef = collection(db, 'orders');
       const q = query(
         ordersRef,
-        where('userEmail', '==', user.email || user.username),
+        where('status', '==', 'Paid'),
         orderBy('orderDate', 'desc')
       );
 
@@ -126,8 +126,7 @@ function OrderHistory() {
 
       {orders.length === 0 ? (
         <div className="no-orders">
-          <p>You haven't placed any orders yet.</p>
-          <p>Start shopping to see your order history here!</p>
+          <p>No orders found.</p>
         </div>
       ) : (
         <div className="orders-list">

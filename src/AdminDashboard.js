@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLogin } from './LoginContext';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection,addDoc,getDocs,doc,updateDoc,deleteDoc,query,where,orderBy} from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from './firebase';
 import './AdminDashboard.css';
@@ -74,18 +74,29 @@ function AdminDashboard() {
     }
   };
 
-  const fetchOrders = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'orders'));
-      const ordersData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setOrders(ordersData);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    }
-  };
+      const fetchOrders = async () => {
+  try {
+    const ordersRef = collection(db, "orders");
+
+    // ⭐ Only PAID orders, sorted latest first
+    const q = query(
+      ordersRef,
+      where("status", "==", "Paid"),
+      orderBy("orderDate", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    const ordersData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    setOrders(ordersData);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+  }
+};
 
   const fetchSupportSubmissions = async () => {
     try {

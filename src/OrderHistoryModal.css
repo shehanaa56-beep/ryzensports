@@ -1,0 +1,178 @@
+/* ===== Overlay ===== */
+.order-history-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* ===== Modal Box ===== */
+.order-history-modal-content {
+  background: #fff;
+  width: 85%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  animation: slideUp 0.25s ease-out;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+/* ===== Header ===== */
+.order-history-header h1 {
+  margin: 0;
+  font-size: 26px;
+  color: #222;
+}
+
+.welcome-message {
+  margin-top: 4px;
+  color: #777;
+}
+
+/* ===== Order Card ===== */
+.order-card {
+  background: #fafafa;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  border: 1px solid #eee;
+  transition: 0.2s;
+}
+
+.order-card:hover {
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+/* ===== Order Header (ID + Status) ===== */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-info h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.order-date {
+  font-size: 14px;
+  color: #666;
+}
+
+.order-status {
+  padding: 6px 14px;
+  color: #fff;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ===== Items ===== */
+.order-items h4 {
+  margin-top: 15px;
+  font-size: 18px;
+}
+
+.order-item {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.item-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.item-name {
+  font-weight: 600;
+}
+
+.item-quantity,
+.item-price,
+.item-size {
+  color: #333;
+  font-size: 14px;
+}
+
+/* ===== Summary Box ===== */
+.order-summary {
+  margin-top: 15px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  background: #100e0e;
+  border: 1px solid #ececec;
+}
+
+/* ⭐ FIX: Make subtotal & total visible on dark background */
+.order-summary .summary-row span {
+  color: #fff !important;
+}
+
+.order-summary .summary-row.total span {
+  color: #fff !important;
+  font-weight: bold;
+}
+
+/* ===== Summary Row ===== */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.summary-row.total {
+  margin-top: 10px;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+/* ===== Address & Tracking ===== */
+.shipping-info,
+.tracking-info {
+  margin-top: 12px;
+  background: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.shipping-info h4,
+.tracking-info h4 {
+  margin-bottom: 5px;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .order-history-modal-content {
+    width: 95%;
+    padding: 16px;
+  }
+
+  .order-card {
+    padding: 14px;
+  }
+}
