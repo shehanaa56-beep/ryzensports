@@ -14,14 +14,18 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // NEW: Preloaded Razorpay order
+  const [preloadedOrder, setPreloadedOrder] = useState(null);
+  const [preloadedKey, setPreloadedKey] = useState("");
+
   // Initialize EmailJS
   emailjs.init('GhbnU4GVjsYtlE4Di');
 
-  // Load Razorpay script
+  // Load Razorpay script early
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.defer = true;
     document.body.appendChild(script);
 
     return () => {
@@ -40,11 +44,10 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
     0
   );
 
-  // Generate UPI payment string
+  // Generate UPI string
   const upiString = `upi://pay?pa=sinuharsha6478-2@okaxis&pn=Jewelry Store&am=${total}&cu=INR&tn=Payment for Order`;
 
-
-  // ⭐⭐⭐ ADDED — Reduce stock AFTER payment success ⭐⭐⭐
+  // ⭐ Reduce stock AFTER successful payment
   const reduceStock = async () => {
     try {
       for (const item of itemsToUse) {
@@ -55,190 +58,151 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
 
         const productData = productSnap.data();
         const updatedSizes = { ...productData.sizes };
-
-        // Reduce quantity based on purchased size
         updatedSizes[item.size] -= item.quantity;
 
         await updateDoc(productRef, { sizes: updatedSizes });
       }
 
-      console.log("Stock reduced successfully after payment.");
+      console.log("Stock reduced successfully.");
     } catch (error) {
       console.error("Error reducing stock:", error);
     }
   };
-  // ⭐⭐⭐ END OF STOCK REDUCTION LOGIC ⭐⭐⭐
 
-
-  const handlePayment = async () => {
-    if (!paymentMethod) {
-      alert("Please select a payment method.");
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
+  // ⚡ PRELOAD Razorpay order BEFORE clicking button
+  useEffect(() => {
+    const preloadOrder = async () => {
       const shippingAddress = JSON.parse(localStorage.getItem("shippingAddress"));
+      if (!shippingAddress) return;
 
+      // Create a temporary Firestore order (status Pending)
       const orderData = {
         userEmail: user.email || user.username,
         items: itemsToUse,
         subtotal: total.toFixed(2),
         shipping: "0.00",
         total: total.toFixed(2),
-        paymentMethod,
+        paymentMethod: "UPI",
         shippingAddress: `${shippingAddress.name}, ${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipCode}, ${shippingAddress.country}`,
         orderDate: serverTimestamp(),
         status: "Pending"
       };
 
-      // Save order to Firestore first
-      const docRef = await addDoc(collection(db, 'orders'), orderData);
-      console.log("Order saved to Firestore with ID:", docRef.id);
+      const docRef = await addDoc(collection(db, "orders"), orderData);
+      setOrderDocId(docRef.id);
 
-      // Create Razorpay order on backend
-      const createOrderResp = await fetch(`${API_BASE}/create-order`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: Math.round(total * 100), currency: 'INR', receipt: docRef.id })
+      // Create razorpay order from backend
+      const resp = await fetch(`${API_BASE}/create-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: Math.round(total * 100),
+          currency: "INR",
+          receipt: docRef.id
+        })
       });
 
-      if (!createOrderResp.ok) {
-        const text = await createOrderResp.text();
-        console.error('Create order failed:', createOrderResp.status, text);
-        alert('Failed to create payment order. Try again.');
-        setIsProcessing(false);
-        return;
-      }
+      const data = await resp.json();
+      setPreloadedOrder(data.order);
+      setPreloadedKey(data.key_id);
+    };
 
-      const createOrderData = await createOrderResp.json();
-      const razorpayOrder = createOrderData.order;
-      const razorpayKeyId = createOrderData.key_id;
+    preloadOrder();
+  }, []);
 
+  // Store Firestore order ID
+  const [orderDocId, setOrderDocId] = useState(null);
 
-      // Razorpay checkout options
-      const options = {
-        key: razorpayKeyId,
-        amount: razorpayOrder.amount,
-        currency: razorpayOrder.currency,
-        name: 'Ryzen Store',
-        description: 'Payment for Order',
-        order_id: razorpayOrder.id,
-        handler: async function (response) {
-          console.log('Payment successful:', response);
+  // Handle payment
+  const handlePayment = async () => {
+    if (!paymentMethod) {
+      alert("Please select a payment method.");
+      return;
+    }
+
+    if (!preloadedOrder) {
+      alert("Still preparing payment… please wait 1 sec.");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    const shippingAddress = JSON.parse(localStorage.getItem("shippingAddress"));
+
+    const options = {
+      key: preloadedKey,
+      amount: preloadedOrder.amount,
+      currency: preloadedOrder.currency,
+      name: "Ryzen Store",
+      description: "Payment for Order",
+      order_id: preloadedOrder.id,
+
+      handler: async (response) => {
+        try {
+          // Verify on backend
+          await fetch(`${API_BASE}/verify-payment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response)
+          });
+
+          // Update Firestore to Paid
+          await updateDoc(firestoreDoc(db, "orders", orderDocId), {
+            status: "Paid",
+            payment: {
+              id: response.razorpay_payment_id,
+              order_id: response.razorpay_order_id,
+              signature: response.razorpay_signature,
+              paidAt: serverTimestamp()
+            }
+          });
+
+          await reduceStock();
+          clearCart();
+
+          setPaymentSuccess(true);
+
+          setTimeout(() => {
+            window.location.href = "/order-history";
+          }, 3000);
+
+        } catch (err) {
+          console.error("Payment processing error:", err);
+          alert("Problem verifying payment.");
+        }
+      },
+
+      prefill: {
+        name: shippingAddress.name,
+        email: user.email || user.username,
+        contact: shippingAddress.phone || "",
+      },
+
+      theme: {
+        color: "#3399cc",
+      },
+
+      modal: {
+        ondismiss: async () => {
+          setIsProcessing(false);
 
           try {
-            // Verify payment with backend
-            const verifyResp = await fetch(`${API_BASE}/verify-payment`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature
-              })
+            await updateDoc(firestoreDoc(db, "orders", orderDocId), {
+              status: "Cancelled",
+              cancelledAt: serverTimestamp()
             });
-
-            if (!verifyResp.ok) {
-              const text = await verifyResp.text();
-              console.error('Payment verification failed:', verifyResp.status, text);
-              alert('Payment verification failed. Contact support.');
-              setIsProcessing(false);
-              return;
-            }
-
-            const verifyData = await verifyResp.json();
-
-            // Update order to Paid
-            await updateDoc(firestoreDoc(db, 'orders', docRef.id), {
-              status: 'Paid',
-              payment: {
-                id: response.razorpay_payment_id,
-                order_id: response.razorpay_order_id,
-                signature: response.razorpay_signature,
-                paidAt: serverTimestamp()
-              }
-            });
-
-            // ⭐⭐⭐ Reduce product stock ONLY now ⭐⭐⭐
-            await reduceStock();
-
-
-            // Send email to admin
-            try {
-              const emailParams = {
-                email: "RyzenSport64@gmail.com",
-                order_id: docRef.id,
-                orders: itemsToUse
-                  .map(item => `${item.name} (Size: ${item.size}) x ${item.quantity}`)
-                  .join("\n"),
-                name: shippingAddress.name,
-                price: total.toFixed(2),
-                shipping_address: [
-                  shippingAddress.name,
-                  shippingAddress.address,
-                  `${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipCode}`,
-                  shippingAddress.country
-                ].join("\n"),
-                product_images: itemsToUse
-                  .map(item => item.image)
-                  .join("\n")
-              };
-
-              await emailjs.send(
-                "service_gmail",
-                "template_ufcvumq",
-                emailParams,
-                "GhbnU4GVjsYtlE4Di"
-              );
-
-              console.log("Order email sent to admin");
-            } catch (emailError) {
-              console.error("Email sending error:", emailError);
-            }
-
-            clearCart();
-            setIsProcessing(false);
-            setPaymentSuccess(true);
-
-            // Auto redirect
-            setTimeout(() => {
-              window.location.href = "/order-history";
-            }, 3000);
-
           } catch (err) {
-            console.error('Error handling payment success:', err);
-            alert('There was a problem processing the payment. Contact support.');
-            setIsProcessing(false);
+            console.error("Cancel update error:", err);
           }
-        },
-        prefill: {
-          name: shippingAddress.name,
-          email: user.email || user.username,
-          contact: shippingAddress.phone || '',
-        },
-        theme: {
-          color: '#3399cc',
-        },
-        modal: {
-          ondismiss: function() {
-            setIsProcessing(false);
-            alert("Payment cancelled.");
-          }
+
+          alert("Payment cancelled.");
         }
-      };
+      }
+    };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-
-    } catch (error) {
-      console.error("Order save error:", error);
-      alert("Failed to initiate payment. Try again.");
-      setIsProcessing(false);
-    }
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
-
 
   if (paymentSuccess) {
     return (
@@ -247,20 +211,7 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
           <div className="success-icon">✓</div>
           <h1>Payment Successful!</h1>
           <p>Your order has been placed successfully.</p>
-          <div className="order-details">
-            <p><strong>Order ID:</strong> #{Date.now()}</p>
-            <p><strong>Total Amount:</strong> ₹{total.toFixed(2)}</p>
-            <p><strong>Payment Method:</strong> {paymentMethod}</p>
-          </div>
-          <p className="redirect-message">
-            Redirecting to order history in 3 seconds...
-          </p>
-          <button
-            onClick={() => (window.location.href = "/order-history")}
-            className="view-orders-btn"
-          >
-            View Order History
-          </button>
+          <p className="redirect-message">Redirecting...</p>
         </div>
       </div>
     );
@@ -272,14 +223,10 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
 
       <div className="order-summary">
         <h2>Order Summary</h2>
-        {itemsToUse.map((item) => (
+        {itemsToUse.map(item => (
           <div key={item.id} className="summary-item">
-            <span>
-              {item.name} x {item.quantity}
-            </span>
-            <span>
-              ₹{(parseFloat(item.currentPrice.replace("₹", "")) * item.quantity).toFixed(2)}
-            </span>
+            <span>{item.name} x {item.quantity}</span>
+            <span>₹{(parseFloat(item.currentPrice.replace("₹", "")) * item.quantity).toFixed(2)}</span>
           </div>
         ))}
         <div className="summary-total">
@@ -293,7 +240,6 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
         <div className="payment-option">
           <input
             type="radio"
-            id="upi"
             name="payment"
             value="UPI"
             onChange={(e) => setPaymentMethod(e.target.value)}
@@ -307,7 +253,7 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
         className="pay-btn"
         disabled={isProcessing}
       >
-        {isProcessing ? "Processing Payment..." : "Confirm Payment"}
+        {isProcessing ? "Processing Payment…" : "Confirm Payment"}
       </button>
     </div>
   );
