@@ -9,7 +9,7 @@ let firebaseApp;
 try {
   admin = require('firebase-admin');
 } catch (e) {
-  console.warn('firebase-admin not available. Webhook Firestore updates will be disabled unless firebase-admin is installed.');
+  console.warn('firebase-admin not available.');
 }
 
 const app = express();
@@ -22,18 +22,18 @@ const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORP
 
 const razorpay = new Razorpay({ key_id: KEY_ID, key_secret: KEY_SECRET });
 
-// Initialize Firebase Admin if service account provided via env var or GOOGLE_APPLICATION_CREDENTIALS
+// -------------------- INIT FIREBASE ADMIN --------------------
 if (admin) {
   try {
     if (process.env.FIREBASE_SERVICE_ACCOUNT) {
       const svc = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
       firebaseApp = admin.initializeApp({ credential: admin.credential.cert(svc) });
-      console.log('Firebase Admin initialized from FIREBASE_SERVICE_ACCOUNT env var');
+      console.log('Firebase Admin initialized from service account.');
     } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
       firebaseApp = admin.initializeApp();
       console.log('Firebase Admin initialized using GOOGLE_APPLICATION_CREDENTIALS');
     } else {
-      console.log('No Firebase credentials provided; webhook will not update Firestore.');
+      console.log('No Firebase credentials provided; Firestore updates disabled.');
     }
   } catch (e) {
     console.error('Failed to initialize Firebase Admin:', e.message);
@@ -42,6 +42,7 @@ if (admin) {
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
+// -------------------- CREATE ORDER --------------------
 app.post('/create-order', async (req, res) => {
   try {
     const { amount, currency = 'INR', receipt } = req.body;
@@ -62,10 +63,13 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
+// -------------------- VERIFY PAYMENT --------------------
 app.post('/verify-payment', (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-    const generated_signature = crypto.createHmac('sha256', KEY_SECRET)
+
+    const generated_signature = crypto
+      .createHmac('sha256', KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex');
 
@@ -80,11 +84,11 @@ app.post('/verify-payment', (req, res) => {
   }
 });
 
-// Webhook endpoint: use raw body to verify signature
+// -------------------- WEBHOOK --------------------
 app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
     const sig = req.headers['x-razorpay-signature'];
-    const body = req.body; // Buffer
+    const body = req.body;
     if (!sig) return res.status(400).json({ message: 'Missing signature' });
 
     const generated = crypto.createHmac('sha256', WEBHOOK_SECRET).update(body).digest('hex');
@@ -94,40 +98,63 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     }
 
     const payload = JSON.parse(body.toString());
-    // Handle payment.captured or order.paid events
     const event = payload.event;
     console.log('Received webhook event:', event);
 
-    // Extract order id and payment entity if available
     const paymentEntity = payload.payload?.payment?.entity;
     const orderEntity = payload.payload?.order?.entity;
     const orderId = paymentEntity?.order_id || orderEntity?.id || null;
 
-    if (orderId) {
-      // Fetch order from Razorpay to get receipt (which we used as Firestore doc id)
-      try {
-        const rOrder = await razorpay.orders.fetch(orderId);
-        const receipt = rOrder.receipt; // this should be firestore doc id
+    if (orderId && firebaseApp) {
+      const firestore = admin.firestore();
 
-        if (firebaseApp) {
-          const firestore = admin.firestore();
-          const updates = { status: 'Paid' };
-          if (paymentEntity) {
-            updates.payment = {
-              id: paymentEntity.id,
-              method: paymentEntity.method,
-              amount: (paymentEntity.amount || 0) / 100,
-              captured: paymentEntity.captured || false,
-              capturedAt: admin.firestore.FieldValue.serverTimestamp()
-            };
-          }
-          await firestore.collection('orders').doc(receipt).update(updates);
-          console.log('Order', receipt, 'updated to Paid in Firestore');
-        } else {
-          console.log('Firebase Admin not initialized — skipping Firestore update for receipt', rOrder.receipt);
+      try {
+        // Fetch Razorpay order to get receipt = Firestore doc id
+        const rOrder = await razorpay.orders.fetch(orderId);
+        const receipt = rOrder.receipt;
+
+        // Update order to Paid
+        const updates = { status: 'Paid' };
+        if (paymentEntity) {
+          updates.payment = {
+            id: paymentEntity.id,
+            method: paymentEntity.method,
+            amount: (paymentEntity.amount || 0) / 100,
+            captured: paymentEntity.captured || false,
+            capturedAt: admin.firestore.FieldValue.serverTimestamp()
+          };
         }
+
+        await firestore.collection('orders').doc(receipt).update(updates);
+        console.log('Order updated:', receipt);
+
+        // ⭐⭐⭐ REDUCE STOCK AFTER PAYMENT — ADDED CODE ⭐⭐⭐
+        const orderDoc = await firestore.collection('orders').doc(receipt).get();
+        const orderData = orderDoc.data();
+
+        if (orderData && Array.isArray(orderData.items)) {
+          for (const item of orderData.items) {
+            const productRef = firestore.collection("products").doc(item.id);
+            const productSnap = await productRef.get();
+
+            if (!productSnap.exists) continue;
+
+            const productData = productSnap.data();
+            const updatedSizes = { ...productData.sizes };
+
+            if (updatedSizes[item.size] !== undefined) {
+              updatedSizes[item.size] -= item.quantity;
+            }
+
+            await productRef.update({ sizes: updatedSizes });
+          }
+
+          console.log("Stock reduced for all items");
+        }
+        // ⭐⭐⭐ END STOCK REDUCTION ⭐⭐⭐
+
       } catch (e) {
-        console.error('Error fetching order or updating Firestore from webhook:', e.message);
+        console.error('Error during webhook Firestore update:', e.message);
       }
     }
 

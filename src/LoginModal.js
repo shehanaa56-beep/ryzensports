@@ -1,114 +1,149 @@
 import React, { useState } from 'react';
 import { useLogin } from './LoginContext';
-import emailjs from '@emailjs/browser';
+import { auth } from './firebase';
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import './LoginModal.css';
 
 function LoginModal({ isOpen, onClose }) {
   const { login, register, checkUserExists } = useLogin();
   const [isRegister, setIsRegister] = useState(false);
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',
     email: '',
+    phone: '',
     confirmPassword: ''
   });
+
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // -------------------------
+  // HANDLE INPUT CHANGE
+  // -------------------------
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (error) setError('');
   };
 
-
-
-  const sendOtp = async () => {
-    // For email OTP verification
-    if (!formData.email) {
-      setError('Please enter email address');
-      return;
-    }
-
-    // Check if user already exists before sending OTP
-    const exists = await checkUserExists(formData.username, formData.email);
-    if (exists) {
-      setError('User already exists');
-      return;
-    }
-
-    // Generate 6-digit OTP
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    try {
-      // Send email using EmailJS
-      const templateParams = {
-        email: formData.email,
-        passcode: generatedOtp,
-        time: new Date().toLocaleString()
-      };
-
-      await emailjs.send(
-        process.env.REACT_APP_EMAILJS_SERVICE_ID || 'service_gmail',
-        process.env.REACT_APP_EMAILJS_TEMPLATE_ID || 'template_ikbnj7n',
-        templateParams,
-        process.env.REACT_APP_EMAILJS_PUBLIC_KEY || 'GhbnU4GVjsYtlE4Di'
-      );
-
-      // Store OTP for verification
-      setConfirmationResult({
-        confirm: async (otp) => {
-          if (otp === generatedOtp) {
-            return { user: { email: formData.email } };
-          } else {
-            throw new Error('Invalid OTP');
+  // -------------------------
+  // CREATE reCAPTCHA (Fix for your error)
+  // -------------------------
+  const initRecaptcha = () => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        'recaptcha-container',
+        {
+          size: 'invisible',
+          callback: () => {
+            console.log("reCAPTCHA Solved");
           }
         }
-      });
-      setOtpSent(true);
-      setError('OTP sent to your email successfully');
-    } catch (error) {
-      console.error('Email sending error:', error);
-      setError('Failed to send OTP. Please try again.');
+      );
     }
   };
 
+  // -------------------------
+  // SEND OTP TO PHONE
+  // -------------------------
+  const sendOtp = async () => {
+    if (!formData.phone) {
+      setError("Please enter phone number");
+      return;
+    }
+    if (!formData.email) {
+      setError("Please enter email");
+      return;
+    }
+
+    const exists = await checkUserExists(formData.username, formData.email);
+    if (exists) {
+      setError("User already exists");
+      return;
+    }
+
+    try {
+      setError('');
+      initRecaptcha();
+
+      // Auto +91
+      const phoneNumber = formData.phone.startsWith('+')
+        ? formData.phone
+        : `+91${formData.phone}`;
+
+      const confirmation = await signInWithPhoneNumber(
+        auth,
+        phoneNumber,
+        window.recaptchaVerifier
+      );
+
+      setConfirmationResult(confirmation);
+      setOtpSent(true);
+      setError("OTP sent to your phone");
+
+    } catch (err) {
+      console.error('Phone OTP error:', err);
+      setError("Failed to send OTP. Try again with a valid phone number.");
+    }
+  };
+
+  // -------------------------
+  // VERIFY OTP
+  // -------------------------
   const verifyOtp = async () => {
+    if (!confirmationResult) {
+      setError("Please request OTP first");
+      return;
+    }
+
     try {
       await confirmationResult.confirm(otp);
-      // OTP verified, now register the user
-      const registerResult = await register(formData.username, formData.email, formData.password);
-      if (registerResult.success) {
+
+      // After OTP success → Register user
+      const result = await register(
+        formData.username,
+        formData.email,
+        formData.password,
+        formData.phone
+      );
+
+      if (result.success) {
         onClose();
       } else {
-        setError(registerResult.error);
+        setError(result.error);
       }
-    } catch (error) {
-      setError('Invalid OTP');
+    } catch (err) {
+      console.error('OTP verification failed:', err);
+      setError("Invalid OTP. Try again.");
     }
   };
 
+  // -------------------------
+  // SUBMIT FORM
+  // -------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
     if (isRegister) {
-      // Registration logic
       if (formData.password !== formData.confirmPassword) {
-        setError('Passwords do not match');
+        setError("Passwords do not match");
         setIsLoading(false);
         return;
       }
-      if (!formData.email || !formData.username || !formData.password) {
-        setError('Please fill all fields');
+
+      if (!formData.email || !formData.username || !formData.password || !formData.phone) {
+        setError("Please fill all fields");
         setIsLoading(false);
         return;
       }
@@ -123,7 +158,6 @@ function LoginModal({ isOpen, onClose }) {
         return;
       }
     } else {
-      // Login logic
       const result = await login(formData.username, formData.password);
       if (!result.success) {
         setError(result.error);
@@ -131,14 +165,12 @@ function LoginModal({ isOpen, onClose }) {
         return;
       }
     }
-    // Close modal after successful submission
+
     onClose();
   };
 
   const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+    if (e.target === e.currentTarget) onClose();
   };
 
   if (!isOpen) return null;
@@ -149,102 +181,112 @@ function LoginModal({ isOpen, onClose }) {
         <button className="close-button" onClick={onClose}>×</button>
 
         <div className="modal-header">
-          <h2>{isRegister ? 'Create an account' : 'Log in to your account'}</h2>
+          <h2>{isRegister ? "Create an account" : "Log in to your account"}</h2>
         </div>
 
         <div className="modal-body">
           <form onSubmit={handleSubmit}>
+
+            {/* Username */}
             <div className="form-group">
-              <label htmlFor="username">Username</label>
+              <label>Username</label>
               <input
                 type="text"
-                id="username"
                 name="username"
+                required
                 value={formData.username}
                 onChange={handleInputChange}
-                placeholder="Enter your username"
-                required
-                autoComplete="username"
+                placeholder="Enter username"
               />
             </div>
 
             {isRegister && (
               <>
+                {/* Email */}
                 <div className="form-group">
-                  <label htmlFor="email">Email</label>
+                  <label>Email</label>
                   <input
                     type="email"
-                    id="email"
                     name="email"
+                    required
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="Enter your email"
-                    required
-                    autoComplete="email"
+                    placeholder="Enter email"
                   />
                 </div>
 
+                {/* Phone */}
                 <div className="form-group">
-                  <label htmlFor="confirmPassword">Confirm Password</label>
+                  <label>Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="9876543210"
+                  />
+                </div>
+
+                {/* Confirm Password */}
+                <div className="form-group">
+                  <label>Confirm Password</label>
                   <input
                     type="password"
-                    id="confirmPassword"
                     name="confirmPassword"
+                    required
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    placeholder="Confirm your password"
-                    required
-                    autoComplete="new-password"
+                    placeholder="Confirm password"
                   />
                 </div>
 
+                {/* OTP Input */}
                 {otpSent && (
                   <div className="form-group">
-                    <label htmlFor="otp">OTP</label>
+                    <label>OTP</label>
                     <input
                       type="text"
-                      id="otp"
+                      maxLength="6"
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
                       placeholder="Enter OTP"
-                      required
-                      maxLength="6"
                     />
                   </div>
                 )}
               </>
             )}
 
+            {/* Password */}
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label>Password</label>
               <input
                 type="password"
-                id="password"
                 name="password"
+                required
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder="Enter your password"
-                required
-                autoComplete="current-password"
+                placeholder="Enter password"
               />
             </div>
 
+            {/* Error */}
             {error && <div className="error-message">{error}</div>}
 
-            <button
-              type="submit"
-              className="submit-button"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Processing...' : (isRegister ? (otpSent ? 'Verify OTP' : 'Send OTP') : 'Log in')}
+            <button type="submit" className="submit-button" disabled={isLoading}>
+              {isLoading
+                ? "Processing..."
+                : isRegister
+                  ? otpSent ? "Verify OTP" : "Send OTP"
+                  : "Log In"}
             </button>
           </form>
 
+          {/* Toggle */}
           <div className="toggle-form">
             <p>
-              {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
+              {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
               <button
-                type="button"
                 className="toggle-button"
                 onClick={() => {
                   setIsRegister(!isRegister);
@@ -255,17 +297,20 @@ function LoginModal({ isOpen, onClose }) {
                     username: '',
                     password: '',
                     email: '',
+                    phone: '',
                     confirmPassword: ''
                   });
                 }}
               >
-                {isRegister ? 'Log in' : 'Sign up'}
+                {isRegister ? "Log in" : "Sign up"}
               </button>
             </p>
           </div>
+
+          {/* Invisible reCAPTCHA anchor */}
+          <div id="recaptcha-container"></div>
         </div>
       </div>
-
     </div>
   );
 }

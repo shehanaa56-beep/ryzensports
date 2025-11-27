@@ -41,7 +41,7 @@
 .order-summary h2 {
   margin-top: 0;
   font-size: 1.8rem;
-  color: #fff;
+  color: #201d1d;
   border-bottom: 2px solid #ff6b6b;
   padding-bottom: 10px;
 }
@@ -51,6 +51,8 @@
   gap: 20px;
   padding: 20px 0;
   border-bottom: 1px solid #444;
+  background-color: #161a1a;
+  color: #0a0a0a;
 }
 
 .checkout-item:last-child {

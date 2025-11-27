@@ -42,7 +42,7 @@
   .price-container {
     display: flex !important;
     flex-direction: row !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     align-items: center !important;
     gap: 8px !important;
     margin-bottom: 20px !important;
@@ -56,7 +56,7 @@
 
   .price-container .original-price {
     font-size: 1.1rem !important;
-    color: #999 !important;
+    color: #080707 !important;
     text-decoration: line-through !important;
   }
 
@@ -167,7 +167,7 @@
 
 .category {
   font-size: 1.2rem;
-  color: #ddd;
+  color: #1d1616;
   margin-bottom: 25px;
   font-weight: 500;
 }
@@ -704,8 +704,12 @@
   }
 
   .category {
-    font-size: 1.1rem;
-  }
+  font-size: 1.2rem;
+  color: #1e1c1c !important;  /* <-- your color */
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
 
   .price-container {
     justify-content: center;
@@ -832,10 +836,12 @@
     font-size: 1.8rem;
   }
 
-  .category {
-    font-size: 1rem;
-    margin-bottom: 20px;
-  }
+ .category {
+  font-size: 1.2rem;
+  color: #282525 !important;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
 
   .price-container {
     flex-direction: column;
@@ -1155,15 +1161,18 @@
 
   .product-card-name {
     font-size: 0.9rem;
+    align-items: left;
   }
 
   .product-card-price .current-price {
     font-size: 0.9rem;
+    align-items: left;
   }
 
   .product-card-price .original-price,
   .product-card-price .discount {
     font-size: 0.8rem;
+    align-items: left;
   }
 }
 /* ===============================
@@ -1182,7 +1191,7 @@
   .size-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: left;
     margin-bottom: 14px;
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
@@ -1394,8 +1403,8 @@
   .product-card-price .discount {
     font-size: 0.95rem;
     font-weight: 700;
-    color: #FFD700;
-    background: rgba(255, 215, 0, 0.15);
+    color: #64a656;
+    background: rgba(127, 224, 103, 0.15);
     padding: 3px 8px;
     border-radius: 6px;
   }
@@ -1458,7 +1467,7 @@
   }
 
   .product-card-price .discount {
-    color: #FFD700 !important;
+    color: #8fea99 !important;
     background: rgba(255, 215, 0, 0.2) !important;
     padding: 3px 8px !important;
     border-radius: 8px !important;
@@ -1576,4 +1585,7 @@
   .size-info-text strong {
     color: #000 !important;
   }
+}
+.size-stock {
+  display: none !important;
 }

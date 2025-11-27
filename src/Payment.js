@@ -3,7 +3,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import { useCart } from './CartContext';
 import { useLogin } from './LoginContext';
 import { db } from './firebase';
-import { collection, addDoc, serverTimestamp, updateDoc, doc as firestoreDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, updateDoc, doc as firestoreDoc, getDoc } from 'firebase/firestore';
 import emailjs from '@emailjs/browser';
 import "./Payment.css";
 
@@ -29,9 +29,8 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
     };
   }, []);
 
-  // Backend base URL — allow override via env var for flexibility
-const API_BASE = "https://ryzensports.onrender.com";
-
+  // Backend base URL
+  const API_BASE = "https://ryzensports.onrender.com";
 
   const itemsToUse = cartItems || contextCartItems;
 
@@ -43,6 +42,33 @@ const API_BASE = "https://ryzensports.onrender.com";
 
   // Generate UPI payment string
   const upiString = `upi://pay?pa=sinuharsha6478-2@okaxis&pn=Jewelry Store&am=${total}&cu=INR&tn=Payment for Order`;
+
+
+  // ⭐⭐⭐ ADDED — Reduce stock AFTER payment success ⭐⭐⭐
+  const reduceStock = async () => {
+    try {
+      for (const item of itemsToUse) {
+        const productRef = firestoreDoc(db, "products", item.id);
+        const productSnap = await getDoc(productRef);
+
+        if (!productSnap.exists()) continue;
+
+        const productData = productSnap.data();
+        const updatedSizes = { ...productData.sizes };
+
+        // Reduce quantity based on purchased size
+        updatedSizes[item.size] -= item.quantity;
+
+        await updateDoc(productRef, { sizes: updatedSizes });
+      }
+
+      console.log("Stock reduced successfully after payment.");
+    } catch (error) {
+      console.error("Error reducing stock:", error);
+    }
+  };
+  // ⭐⭐⭐ END OF STOCK REDUCTION LOGIC ⭐⭐⭐
+
 
   const handlePayment = async () => {
     if (!paymentMethod) {
@@ -67,18 +93,17 @@ const API_BASE = "https://ryzensports.onrender.com";
         status: "Pending"
       };
 
-      // Save order to Firestore first (status: Pending)
+      // Save order to Firestore first
       const docRef = await addDoc(collection(db, 'orders'), orderData);
       console.log("Order saved to Firestore with ID:", docRef.id);
 
-      // Create Razorpay order on our backend
+      // Create Razorpay order on backend
       const createOrderResp = await fetch(`${API_BASE}/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: Math.round(total * 100), currency: 'INR', receipt: docRef.id })
       });
 
-      // Check response before parsing as JSON (avoid parsing HTML error pages)
       if (!createOrderResp.ok) {
         const text = await createOrderResp.text();
         console.error('Create order failed:', createOrderResp.status, text);
@@ -90,6 +115,7 @@ const API_BASE = "https://ryzensports.onrender.com";
       const createOrderData = await createOrderResp.json();
       const razorpayOrder = createOrderData.order;
       const razorpayKeyId = createOrderData.key_id;
+
 
       // Razorpay checkout options
       const options = {
@@ -124,7 +150,7 @@ const API_BASE = "https://ryzensports.onrender.com";
 
             const verifyData = await verifyResp.json();
 
-            // Update Firestore order to Paid and add payment details
+            // Update order to Paid
             await updateDoc(firestoreDoc(db, 'orders', docRef.id), {
               status: 'Paid',
               payment: {
@@ -135,7 +161,11 @@ const API_BASE = "https://ryzensports.onrender.com";
               }
             });
 
-            // Send Email to Admin
+            // ⭐⭐⭐ Reduce product stock ONLY now ⭐⭐⭐
+            await reduceStock();
+
+
+            // Send email to admin
             try {
               const emailParams = {
                 email: "RyzenSport64@gmail.com",
@@ -168,12 +198,11 @@ const API_BASE = "https://ryzensports.onrender.com";
               console.error("Email sending error:", emailError);
             }
 
-            // Clear cart & show success
             clearCart();
             setIsProcessing(false);
             setPaymentSuccess(true);
 
-            // Auto redirect after 3 seconds
+            // Auto redirect
             setTimeout(() => {
               window.location.href = "/order-history";
             }, 3000);
@@ -209,6 +238,7 @@ const API_BASE = "https://ryzensports.onrender.com";
       setIsProcessing(false);
     }
   };
+
 
   if (paymentSuccess) {
     return (
@@ -269,8 +299,6 @@ const API_BASE = "https://ryzensports.onrender.com";
             onChange={(e) => setPaymentMethod(e.target.value)}
           />
           <p>UPI</p>
-
-         
         </div>
       </div>
 
