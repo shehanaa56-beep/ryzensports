@@ -153,7 +153,6 @@ function OrderHistory() {
                       <div className="item-info">
                         <span className="item-name">{item.name}</span>
                         <span className="item-quantity">Qty: {item.quantity}</span>
-                        <span className="item-price">${item.price?.toFixed(2)}</span>
                       </div>
                       {item.size && <span className="item-size">Size: {item.size}</span>}
                     </div>
@@ -163,15 +162,15 @@ function OrderHistory() {
                 <div className="order-summary">
                   <div className="summary-row">
                     <span>Subtotal:</span>
-                    <span>${typeof order.subtotal === 'number' ? order.subtotal.toFixed(2) : order.subtotal || 'N/A'}</span>
+                    <span>₹{typeof order.subtotal === 'number' ? order.subtotal.toFixed(2) : order.subtotal || 'N/A'}</span>
                   </div>
                   <div className="summary-row">
                     <span>Shipping:</span>
-                    <span>${typeof order.shipping === 'number' ? order.shipping.toFixed(2) : order.shipping || '0.00'}</span>
+                    <span>₹{typeof order.shipping === 'number' ? order.shipping.toFixed(2) : order.shipping || '0.00'}</span>
                   </div>
                   <div className="summary-row total">
                     <span>Total:</span>
-                    <span>${typeof order.total === 'number' ? order.total.toFixed(2) : order.total || 'N/A'}</span>
+                    <span>₹{typeof order.total === 'number' ? order.total.toFixed(2) : order.total || 'N/A'}</span>
                   </div>
                 </div>
               </div>

@@ -128,7 +128,6 @@ function OrderHistoryModal() {
                       <div className="item-info">
                         <span className="item-name">{item.name}</span>
                         <span className="item-quantity">Qty: {item.quantity}</span>
-                        <span className="item-price">₹{Number(item.price).toFixed(2)}</span>
                       </div>
                       {item.size && <span className="item-size">Size: {item.size}</span>}
                     </div>
