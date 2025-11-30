@@ -150,8 +150,10 @@ function AdminDashboard() {
     }
   };
 
+  /* 🔥 FIXED handleEdit */
   const handleEdit = (product) => {
     setEditingProduct(product);
+
     setProductForm({
       ...productForm,
       name: product.name,
@@ -160,9 +162,16 @@ function AdminDashboard() {
       discount: product.discount,
       category: product.category,
       section: product.section,
+
+      useUrl: true,          // IMPORTANT FIX
+      image: null,
+      image2: null,
+      image3: null,
+
       imageUrl: product.image,
       image2Url: product.image2 || "",
       image3Url: product.image3 || "",
+
       sizes: product.sizes
     });
   };
@@ -174,7 +183,6 @@ function AdminDashboard() {
     }
   };
 
-  // PRODUCT FORM UI
   const renderProductsTab = () => (
     <div className="dashboard-content">
       <div className="product-form">
@@ -182,7 +190,6 @@ function AdminDashboard() {
 
         <form onSubmit={handleSubmit}>
 
-          {/* 🔥 UPDATED SECTION DROPDOWN */}
           <div className="form-group">
             <label>Section:</label>
             <select
@@ -193,13 +200,12 @@ function AdminDashboard() {
             >
               <option value="home">Home</option>
               <option value="outlet">Outlet</option>
-
-              {/* NEW SECTIONS */}
               <option value="fullsleeves">Fullsleeves</option>
               <option value="halfsleeves">Halfsleeves</option>
               <option value="oversized">Oversized</option>
             </select>
           </div>
+
           <div className="form-row">
             <div className="form-group">
               <label>Product Name:</label>
@@ -422,13 +428,16 @@ function AdminDashboard() {
             </div>
           </div>
 
+          {/* 🔥 FIXED - safe preview */}
           {(productForm.image || productForm.imageUrl) && (
             <div className="image-preview">
               <img
                 src={
                   productForm.useUrl
                     ? productForm.imageUrl
-                    : URL.createObjectURL(productForm.image)
+                    : productForm.image instanceof File
+                      ? URL.createObjectURL(productForm.image)
+                      : ""
                 }
                 alt="Preview"
                 style={{
@@ -456,7 +465,6 @@ function AdminDashboard() {
         </form>
       </div>
 
-      {/* PRODUCT LIST */}
       <div className="products-list">
         <h2>Products ({products.length})</h2>
 
@@ -500,7 +508,7 @@ function AdminDashboard() {
     </div>
   );
 
-  // RENDER ORDERS TAB
+  // ORDERS, SUPPORT, INSTA — UNCHANGED
   const renderOrdersTab = () => (
     <div className="orders-section">
       <h2>Order History ({orders.length})</h2>
@@ -555,7 +563,6 @@ function AdminDashboard() {
     </div>
   );
 
-  // SUPPORT TAB
   const renderSupportTab = () => (
     <div className="support-section">
       <h2>Customer Support Submissions ({supportSubmissions.length})</h2>
@@ -602,14 +609,10 @@ function AdminDashboard() {
     </div>
   );
 
-  // INSTA COLLECTIONS TAB
   const renderInstaTab = () => (
     <div className="dashboard-content">
       <div className="product-form">
         <h2>{editingCollection ? "Edit Collection" : "Add New Collection"}</h2>
-
-        {/* COLLECTION FORM UI (UNCHANGED) */}
-        {/* ... your existing collection form code here ... */}
       </div>
 
       <div className="products-list">
@@ -648,7 +651,6 @@ function AdminDashboard() {
     </div>
   );
 
-  // MAIN RENDER
   return (
     <div className="admin-dashboard">
       <div className="dashboard-header">
