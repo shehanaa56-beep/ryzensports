@@ -14,11 +14,9 @@ export const LoginProvider = ({ children }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Cache users in memory
   const usersCacheRef = useRef({});
 
   useEffect(() => {
-    // Load logged user
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       const userData = JSON.parse(storedUser);
@@ -27,7 +25,6 @@ export const LoginProvider = ({ children }) => {
       setIsAdmin(userData.isAdmin || false);
     }
 
-    // Load local users to cache
     try {
       const usersJson = localStorage.getItem('users');
       if (usersJson) {
@@ -40,14 +37,10 @@ export const LoginProvider = ({ children }) => {
       } else {
         usersCacheRef.current = {};
       }
-    } catch (err) {
-      console.error('Failed to load users cache:', err);
-      usersCacheRef.current = {};
-    }
+    } catch (err) {}
   }, []);
 
   const login = async (username, password) => {
-    // Admin login
     if (username === "ryzensports@gmail.com" && password === "ryzen2244") {
       const adminUser = {
         username,
@@ -62,7 +55,6 @@ export const LoginProvider = ({ children }) => {
       return { success: true };
     }
 
-    // From cache
     const usersMap = usersCacheRef.current || {};
     const found = usersMap[username];
 
@@ -76,10 +68,10 @@ export const LoginProvider = ({ children }) => {
       return { success: true };
     }
 
-    // Fallback localStorage
     try {
       const users = JSON.parse(localStorage.getItem('users')) || [];
       const user = users.find(u => u.username === username && u.password === password);
+
       if (user) {
         usersCacheRef.current[username] = user;
 
@@ -92,11 +84,8 @@ export const LoginProvider = ({ children }) => {
         setModalOpen(false);
         return { success: true };
       }
-    } catch (err) {
-      console.error('Error loading users from localStorage:', err);
-    }
+    } catch (err) {}
 
-    // Firestore
     try {
       const usersRef = collection(db, 'users');
       const q = query(usersRef, where('username', '==', username));
@@ -122,14 +111,11 @@ export const LoginProvider = ({ children }) => {
           return { success: true };
         }
       }
-    } catch (err) {
-      console.error('Error checking Firestore login:', err);
-    }
+    } catch (err) {}
 
     return { success: false, error: 'Invalid username or password' };
   };
 
-  // ⭐ Updated to support phone number ⭐
   const register = async (username, email, password, phone) => {
     const exists = await checkUserExists(username, email);
     if (exists) {
@@ -140,7 +126,7 @@ export const LoginProvider = ({ children }) => {
       id: Date.now(),
       username,
       email,
-      phone,           // <--- added phone
+      phone,
       password,
       isAdmin: false,
       registrationTime: new Date().toISOString()
@@ -155,7 +141,6 @@ export const LoginProvider = ({ children }) => {
 
       usersCacheRef.current[username] = newUser;
     } catch (err) {
-      console.error('Error saving new user:', err);
       return { success: false, error: 'Registration failed' };
     }
 
@@ -173,6 +158,8 @@ export const LoginProvider = ({ children }) => {
     setUser(null);
     setIsLoggedIn(false);
     setIsAdmin(false);
+
+    // ⭐ DO NOT clear guestCart here
     localStorage.removeItem('currentUser');
   };
 
@@ -185,9 +172,7 @@ export const LoginProvider = ({ children }) => {
       const [s1, s2] = await Promise.all([getDocs(q1), getDocs(q2)]);
       if (!s1.empty || !s2.empty) return true;
 
-    } catch (err) {
-      console.error('Error checking existing user:', err);
-    }
+    } catch (err) {}
 
     const usersMap = usersCacheRef.current || {};
     return (

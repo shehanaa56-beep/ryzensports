@@ -1,50 +1,86 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './SearchResults.css';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./SearchResults.css";
 
 function SearchResults({ results, onClose }) {
   const navigate = useNavigate();
 
-  const handleSelectProduct = (productId) => {
-    navigate(`/product/${productId}`);
+  if (!results) return null;
+
+  const { suggestions = [], products = [] } = results;
+
+  const goToProduct = (id) => {
+    navigate(`/product/${id}`);
     onClose();
   };
 
-  if (results.length === 0) {
-    return (
-      <div className="search-results-container">
-        <div className="no-results">
-          No products found
-        </div>
-      </div>
-    );
-  }
+  // ⭐ Detect section from suggestion text
+  const goToSection = (text) => {
+    const lower = text.toLowerCase();
+
+    let section = null;
+
+    if (lower.includes("half")) section = "halfsleeves";
+    else if (lower.includes("full")) section = "fullsleeves";
+    else if (lower.includes("oversized")) section = "oversized";
+
+    if (section) {
+      navigate("/outlet", { state: { section } });
+      onClose();
+    }
+  };
 
   return (
-    <div className="search-results-container">
-      {results.map((product) => (
-        <div
-          key={product.id}
-          className="search-result-item"
-          onClick={() => handleSelectProduct(product.id)}
-        >
-          <img
-            src={product.image}
-            alt={product.category}
-            className="search-result-image"
-          />
-          <div className="search-result-info">
-            <div className="search-result-name">{product.category}</div>
-            <div className="search-result-price">
-              ₹{product.currentPrice} {product.originalPrice && (
-                <span style={{ textDecoration: 'line-through', color: '#999', marginLeft: '8px' }}>
-                  ₹{product.originalPrice}
-                </span>
-              )}
+    <div className="search-box">
+
+      {/* ⭐ SUGGESTIONS SECTION */}
+      {suggestions.length > 0 && (
+        <>
+          <h4 className="sr-title">SUGGESTIONS</h4>
+
+          {suggestions.map((text, i) => (
+            <div
+              key={i}
+              className="sr-suggestion"
+              onClick={() => goToSection(text)}
+            >
+              {text}
             </div>
-          </div>
-        </div>
-      ))}
+          ))}
+        </>
+      )}
+
+      {/* ⭐ PRODUCTS SECTION */}
+      {products.length > 0 && (
+        <>
+          <h4 className="sr-title">PRODUCTS</h4>
+
+          {products.map((p, index) => (
+            <div
+              key={p.id || index}
+              className="sr-product"
+              onClick={() => goToProduct(p.id)}
+            >
+              <img
+                src={p.image || "/images/default.png"}
+                alt="product"
+                className="sr-product-img"
+              />
+
+              <div className="sr-product-info">
+                <div className="sr-product-name">
+                  {p.category}
+                </div>
+              </div>
+            </div>
+          ))}
+        </>
+      )}
+
+      {/* ❌ No Results */}
+      {suggestions.length === 0 && products.length === 0 && (
+        <div className="no-results">No products found</div>
+      )}
     </div>
   );
 }

@@ -2,8 +2,8 @@
    🧭 Header (Final – Centered Desktop)
 =============================== */
 .header {
-  background-color: #000;
-  color: #fff;
+  background-color: #fff;
+  color: #0b0909;
   padding: 15px 30px;
   position: fixed;
   top: 0;
@@ -153,7 +153,7 @@
   .hamburger span {
     width: 25px;
     height: 4px;
-    background-color: #fff;
+    background-color: #000;
     border-radius: 2px;
   }
 
@@ -202,8 +202,8 @@
   }
 
   .mobile-menu {
-    background-color: #000;
-    color: #fff;
+    background-color: #fff;
+    color: #000;
     position: absolute;
     top: 50px;
     left: 0;
@@ -225,15 +225,15 @@
   }
 
   .mobile-menu nav ul li a {
-    color: #fff;
+    color: #000;
     font-size: 18px;
     text-transform: uppercase;
     text-decoration: none;
     transition: color 0.3s ease;
     padding: 12px 20px;
     border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(250, 233, 233, 0.2);
+    border: 1px solid rgba(249, 233, 233, 0.3);
     display: block;
     width: 100%;
     text-align: center;
@@ -252,5 +252,57 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+}/* ============================
+   ⭐ Make category buttons identical
+============================ */
+@media (max-width: 768px) {
+
+  .mobile-cat-btn {
+    width: 85%;
+    padding: 14px 0;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: #fff;  /* same as menu buttons */
+    border: 1px solid #555;
+    color: #000;
+    border-radius: 10px;        /* identical roundness */
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease;
+    display: block;
+    text-align: center;
+  }
+
+  .mobile-cat-btn:hover {
+    background-color: #b9adad;
+  }
+
+  /* LOGIN button use same style */
+  .mobile-login-btn {
+    width: 85%;
+    padding: 14px 0;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: #fff;
+    border: 1px solid #555;
+    color: #000;
+    border-radius: 10px;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    transition: background 0.25s ease;
+  }
+
+  .mobile-login-btn:hover {
+    background-color: #3a3a3a;
+  }
+}
+/* ⭐ Restore original small hamburger icon */
+@media (max-width: 768px) {
+  .hamburger span {
+    width: 10px !important;
+    height: 1px !important;
   }
 }

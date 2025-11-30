@@ -1,0 +1,161 @@
+/* ===============================
+   MAIN SECTION
+=============================== */
+.testimonials {
+  background: #ffffff;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.testimonials h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 1.05rem;
+  margin-bottom: 2.5rem;
+}
+
+/* ===============================
+   CARD LAYOUT
+=============================== */
+.testimonial-cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+/* Individual card */
+.testimonial-card {
+  background: #fff;
+  border-radius: 14px;
+  width: 300px;
+  padding: 2rem 1.5rem;
+  text-align: left;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border: 1px solid #eee;
+}
+
+/* Initial bubble */
+.initial-circle {
+  background: #3d3939;
+  color: #fff;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  font-weight: bold;
+}
+
+/* Quote */
+.quote {
+  margin-top: 1.5rem;
+  color: #444;
+  font-size: 1rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Name */
+.name {
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #111;
+}
+
+/* ===============================
+   📱 TABLET RESPONSIVE
+=============================== */
+@media (max-width: 992px) {
+  .testimonials {
+    padding: 3.5rem 1.5rem;
+  }
+
+  .testimonials h2 {
+    font-size: 1.85rem;
+  }
+
+  .testimonial-card {
+    width: 260px;
+    padding: 1.7rem 1.3rem;
+  }
+
+  .quote {
+    font-size: 0.95rem;
+  }
+}
+
+/* ===============================
+   📱 MOBILE RESPONSIVE
+=============================== */
+@media (max-width: 768px) {
+  .testimonials {
+    padding: 3rem 1rem;
+  }
+
+  .testimonials h2 {
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .testimonial-cards {
+    gap: 1.5rem;
+  }
+
+  .testimonial-card {
+    width: 90%;
+    padding: 1.6rem 1.2rem;
+  }
+
+  .initial-circle {
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+
+  .quote {
+    font-size: 0.92rem;
+  }
+}
+
+/* ===============================
+   📱 SMALL MOBILE (iPhone SE, 12 Mini)
+=============================== */
+@media (max-width: 480px) {
+  .testimonials {
+    padding: 2.5rem 0.8rem;
+  }
+
+  .testimonials h2 {
+    font-size: 1.45rem;
+  }
+
+  .testimonial-card {
+    width: 100%;
+    padding: 1.4rem 1rem;
+  }
+
+  .quote {
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  .name {
+    font-size: 0.9rem;
+  }
+}

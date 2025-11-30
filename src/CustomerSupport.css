@@ -88,7 +88,7 @@
   font-size: 14px;
   font-family: 'Roboto', sans-serif;
   color: #202124;
-  background: white;
+  background: rgb(249, 245, 245);
   transition: border-color 0.2s ease;
 }
 
@@ -207,6 +207,7 @@
 
   .form-description {
     font-size: 13px;
+    background-color: #c3cfe2;
   }
 }
 

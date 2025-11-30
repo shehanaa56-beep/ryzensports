@@ -4,9 +4,9 @@
   margin: 0 auto;
   padding: 40px 20px;
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  background-color: #fff;
   min-height: 100vh;
-  color: #fff;
+  color: #070707;
 }
 
 .checkout-page h1 {
@@ -26,12 +26,13 @@
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
+  background-color: #fff;
 }
 
 .order-summary {
   flex: 1;
   min-width: 300px;
-  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  background-color: #fff;
   border: 1px solid #333;
   border-radius: 15px;
   padding: 30px;
@@ -41,7 +42,7 @@
 .order-summary h2 {
   margin-top: 0;
   font-size: 1.8rem;
-  color: #201d1d;
+  color: #050404;
   border-bottom: 2px solid #ff6b6b;
   padding-bottom: 10px;
 }
@@ -51,7 +52,7 @@
   gap: 20px;
   padding: 20px 0;
   border-bottom: 1px solid #444;
-  background-color: #161a1a;
+  background-color: #eff6f6;
   color: #0a0a0a;
 }
 
@@ -70,12 +71,12 @@
 .checkout-item-details h3 {
   margin: 0 0 10px 0;
   font-size: 1.2rem;
-  color: #fff;
+  color: #0c0b0b;
 }
 
 .checkout-item-details p {
   margin: 5px 0;
-  color: #ccc;
+  color: #080606;
   font-size: 0.9rem;
 }
 
@@ -95,7 +96,7 @@
 .shipping-form {
   flex: 1;
   min-width: 300px;
-  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  background: linear-gradient(145deg, #f9f7f7, #faf9f9);
   border: 1px solid #333;
   border-radius: 15px;
   padding: 30px;
@@ -105,7 +106,7 @@
 .shipping-form h2 {
   margin-top: 0;
   font-size: 1.8rem;
-  color: #fff;
+  color: #0a0909;
   border-bottom: 2px solid #ff6b6b;
   padding-bottom: 10px;
 }
@@ -117,7 +118,7 @@
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  color: #ccc;
+  color: #141313;
   font-weight: bold;
 }
 
@@ -127,8 +128,8 @@
   padding: 12px;
   border: 1px solid #555;
   border-radius: 8px;
-  background: #333;
-  color: #fff;
+  background: #f9f7f7;
+  color: #181717;
   font-size: 1rem;
 }
 
@@ -150,7 +151,7 @@
   width: 100%;
   padding: 15px;
   background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-  color: white;
+  color: rgb(11, 9, 9);
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -187,4 +188,64 @@
 
 @media (max-width: 320px) {
   /* Add styles for max-width 320px */
+}
+
+/* =============================== */
+/* ⭐ GOOGLE AUTOCOMPLETE FIX AREA */
+/* =============================== */
+
+.google-autocomplete-input {
+  width: 100% !important;
+  padding: 12px !important;
+  background: #fff !important;
+  color: #000 !important;
+  border: 1px solid #ccc !important;
+  border-radius: 8px !important;
+  font-size: 1rem !important;
+}
+
+/* Google dropdown container */
+.pac-container {
+  background: #fff !important;
+  color: #000 !important;
+  border-radius: 8px !important;
+  z-index: 99999 !important;
+}
+
+/* Google suggestion items */
+.pac-item {
+  padding: 10px !important;
+  font-size: 1rem !important;
+  color: #000 !important;
+}
+
+.pac-item-query {
+  color: #000 !important;
+}
+
+/* Remove weird icons */
+.pac-icon {
+  display: none !important;
+}
+.suggestions-box {
+  background: #f9f7f7;
+  border: 1px solid #444;
+  border-radius: 8px;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  list-style: none;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.suggestions-box li {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #333;
+  color: #fff;
+}
+
+.suggestions-box li:hover {
+  background: #333;
 }

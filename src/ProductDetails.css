@@ -16,7 +16,7 @@
   .price-container .current-price {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #e4b320;
+    color: #070707;
     text-shadow: 0 0 10px rgba(69, 68, 62, 0.4);
   }
 
@@ -51,7 +51,7 @@
   .price-container .current-price {
     font-size: 1.5rem !important;
     font-weight: 700 !important;
-    color: #FFD700 !important;
+    color: #080808 !important;
   }
 
   .price-container .original-price {
@@ -63,7 +63,7 @@
   .price-container .discount {
     font-size: 1rem !important;
     font-weight: 700 !important;
-    color: #FFD700 !important;
+    color: #29271a !important;
     background: rgba(255, 215, 0, 0.15) !important;
     padding: 3px 8px !important;
     border-radius: 6px !important;
@@ -81,7 +81,7 @@
   }
 
   .product-card-price .current-price {
-    color: #FFD700 !important;
+    color: #0c0c0b !important;
     font-weight: 700 !important;
     font-size: 1.1rem !important;
   }
@@ -93,7 +93,7 @@
   }
 
   .product-card-price .discount {
-    color: #FFD700 !important;
+    color: #0b0b0b !important;
     font-size: 0.9rem !important;
     background: rgba(255, 215, 0, 0.2) !important;
     padding: 2px 6px !important;
@@ -105,7 +105,7 @@
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #000000, #111111, #d0ead8, #0a0702, #000000, #000000, #000000);
+  background: linear-gradient(135deg, #f8f6f6, #fdf9f9, #d0ead8, #fdfcfb, #faf9f9, #faf9f9, #fcfafa);
   min-height: 100vh;
 }
 
@@ -160,7 +160,7 @@
 .product-info h1 {
   font-size: 2.5rem;
   margin-bottom: 15px;
-  color: #fff;
+  color: #120e0e;
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -182,7 +182,7 @@
 .current-price {
   font-size: 2rem;
   font-weight: bold;
-  color: #FFD700;
+  color: #0a0a08;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
@@ -194,7 +194,7 @@
 
 .discount {
   font-size: 1.3rem;
-  color: #FFD700;
+  color: #060605;
   font-weight: bold;
   background: rgba(255, 215, 0, 0.2);
   padding: 5px 10px;
@@ -475,6 +475,7 @@
 .size-info-text {
   font-size: 14px;
   line-height: 1.5;
+  color: #000;
 }
 
 .size-info-text strong {
@@ -545,7 +546,7 @@
 .related-products-section h2 {
   font-size: 2rem;
   font-weight: 700;
-  color: #fff;
+  color: #0c0a0a;
   margin-bottom: 30px;
   text-align: center;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -559,7 +560,7 @@
 }
 
 .product-card {
-  background: rgba(255, 255, 255, 0.1);
+  background-color: #fff;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
@@ -591,7 +592,7 @@
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 10px;
-  color: #fff;
+  color: #0c0b0b;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
@@ -606,7 +607,7 @@
 .product-card-price .current-price {
   font-size: 1.1rem;
   font-weight: bold;
-  color: #FFD700;
+  color: #0a0908;
 }
 
 .product-card-price .original-price {
@@ -617,7 +618,7 @@
 
 .product-card-price .discount {
   font-size: 0.9rem;
-  color: #FFD700;
+  color: #0e0d0c;
   font-weight: bold;
   background: rgba(255, 215, 0, 0.2);
   padding: 3px 8px;
@@ -639,6 +640,7 @@
   .product-details-page {
     padding: 15px;
     max-width: 1000px;
+    background-color: #fff;
   }
 
   .product-details-container {
@@ -1199,7 +1201,7 @@
 
   .size-header h2 {
     font-size: 17px;
-    color: #FFD700;
+    color: #0f0f0d;
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -1207,7 +1209,7 @@
 
   .size-guide {
     font-size: 13px;
-    color: #fff;
+    color: #070606;
     font-weight: 500;
     text-decoration: none;
     display: flex;
@@ -1287,7 +1289,7 @@
   }
 
   .size-info-text strong {
-    color: #FFD700;
+    color: #0f0f0d;
   }
 }
 /* ===============================
@@ -1307,7 +1309,7 @@
   .product-card-price .current-price {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #FFD700;
+    color: #070706;
     text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
   }
 
@@ -1321,7 +1323,7 @@
   .product-card-price .discount {
     font-size: 1rem;
     font-weight: 700;
-    color: #FFD700;
+    color: #080808;
     background: rgba(255, 215, 0, 0.15);
     padding: 4px 8px;
     border-radius: 8px;
@@ -1349,7 +1351,7 @@
   .product-card-price .current-price {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #FFD700;
+    color: #0c0c0b;
   }
 
   .product-card-price .original-price {
@@ -1361,7 +1363,7 @@
   .product-card-price .discount {
     font-size: 0.9rem;
     font-weight: 700;
-    color: #FFD700;
+    color: #060606;
     background: rgba(255, 215, 0, 0.2);
     padding: 3px 7px;
     border-radius: 6px;
@@ -1390,7 +1392,7 @@
   .product-card-price .current-price {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #FFD700; /* golden */
+    color: #10100f; /* golden */
   }
 
   .product-card-price .original-price {
@@ -1458,7 +1460,7 @@
   }
 
   .product-card-price .current-price {
-    color: #FFD700 !important;
+    color: #0b0b0a !important;
   }
 
   .product-card-price .original-price {

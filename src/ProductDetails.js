@@ -210,12 +210,12 @@ function ProductDetails() {
           </div>
         </div>
 
-        <div className="product-info">
+        <div className="product-info" >
           <h1>{product.name}</h1>
           <p className="category">{product.category}</p>
 
           <div className="price-container">
-            <span className="current-price">{product.currentPrice}</span>
+            <span className="current-price" style={{color:"#000"}}>{product.currentPrice}</span>
             <span className="original-price">{product.originalPrice}</span>
             <span className="discount">{product.discount}</span>
           </div>
@@ -257,7 +257,7 @@ function ProductDetails() {
               ))}
             </div>
 
-            <div className="size-info-text">
+            <div className="size-info-text " style={{color:"#353333ff"}}>
               <strong>True to size.</strong> We recommend ordering your usual size.
             </div>
 

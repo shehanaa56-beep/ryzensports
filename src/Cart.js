@@ -79,8 +79,8 @@ function Cart() {
             <h2>Order Summary</h2>
             <p>Total: ₹{getTotalPrice().toFixed(2)}</p>
             <button className="checkout-button" onClick={handleCheckout}>
-              {isLoggedIn ? 'Proceed to Checkout' : 'Checkout'}
-            </button>
+              {isLoggedIn ? ' Checkout' : 'Checkout'}
+                                                                                          </button>
           </div>
         </div>
       )}

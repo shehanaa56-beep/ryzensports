@@ -1,8 +1,8 @@
 /* About Section */
 .about-section {
   padding: 80px 0;
- background: linear-gradient(135deg, #0b0c0c 0%, #064d03 100%);
-  color: #fbfafa;
+ background: linear-gradient(135deg, #f6f9f9 0%, #deecde 100%);
+  color: #000;
   text-align: center;
 }
 
@@ -18,7 +18,7 @@
   margin-bottom: 40px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  background: linear-gradient(135deg, #f4f0f0 0%, #333 100%);
+  background: linear-gradient(135deg, #8d8989 0%, #271f1f 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -29,7 +29,7 @@
   line-height: 1.8;
   max-width: 800px;
   margin: 0 auto;
-  color: #efdddd;
+  color: #312c2c;
   font-weight: 400;
 }
 

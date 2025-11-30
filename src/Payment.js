@@ -14,26 +14,16 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // NEW: Preloaded Razorpay order
-  const [preloadedOrder, setPreloadedOrder] = useState(null);
-  const [preloadedKey, setPreloadedKey] = useState("");
-
-  // Initialize EmailJS
   emailjs.init('GhbnU4GVjsYtlE4Di');
 
-  // Load Razorpay script early
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.defer = true;
     document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
+    return () => document.body.removeChild(script);
   }, []);
 
-  // Backend base URL
   const API_BASE = "https://ryzensports.onrender.com";
 
   const itemsToUse = cartItems || contextCartItems;
@@ -44,10 +34,8 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
     0
   );
 
-  // Generate UPI string
   const upiString = `upi://pay?pa=sinuharsha6478-2@okaxis&pn=Jewelry Store&am=${total}&cu=INR&tn=Payment for Order`;
 
-  // ⭐ Reduce stock AFTER successful payment
   const reduceStock = async () => {
     try {
       for (const item of itemsToUse) {
@@ -62,66 +50,16 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
 
         await updateDoc(productRef, { sizes: updatedSizes });
       }
-
-      console.log("Stock reduced successfully.");
     } catch (error) {
       console.error("Error reducing stock:", error);
     }
   };
 
-  // ⚡ PRELOAD Razorpay order BEFORE clicking button
-  useEffect(() => {
-    const preloadOrder = async () => {
-      const shippingAddress = JSON.parse(localStorage.getItem("shippingAddress"));
-      if (!shippingAddress) return;
-
-      // Create a temporary Firestore order (status Pending)
-      const orderData = {
-        userEmail: user.email || user.username,
-        items: itemsToUse,
-        subtotal: total.toFixed(2),
-        shipping: "0.00",
-        total: total.toFixed(2),
-        paymentMethod: "UPI",
-        shippingAddress: `${shippingAddress.name}, ${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipCode}, ${shippingAddress.country}`,
-        orderDate: serverTimestamp(),
-        status: "Pending"
-      };
-
-      const docRef = await addDoc(collection(db, "orders"), orderData);
-      setOrderDocId(docRef.id);
-
-      // Create razorpay order from backend
-      const resp = await fetch(`${API_BASE}/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: Math.round(total * 100),
-          currency: "INR",
-          receipt: docRef.id
-        })
-      });
-
-      const data = await resp.json();
-      setPreloadedOrder(data.order);
-      setPreloadedKey(data.key_id);
-    };
-
-    preloadOrder();
-  }, []);
-
-  // Store Firestore order ID
   const [orderDocId, setOrderDocId] = useState(null);
 
-  // Handle payment
   const handlePayment = async () => {
     if (!paymentMethod) {
       alert("Please select a payment method.");
-      return;
-    }
-
-    if (!preloadedOrder) {
-      alert("Still preparing payment… please wait 1 sec.");
       return;
     }
 
@@ -129,72 +67,122 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
 
     const shippingAddress = JSON.parse(localStorage.getItem("shippingAddress"));
 
+    const orderData = {
+      userEmail: user?.email || user?.username || "guest",
+      items: itemsToUse,
+      subtotal: total.toFixed(2),
+      shipping: "0.00",
+      total: total.toFixed(2),
+      paymentMethod,
+      shippingAddress: `${shippingAddress.name}, ${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zipCode}, ${shippingAddress.country}`,
+      orderDate: serverTimestamp(),
+      status: "Pending",
+    };
+
+    const docRef = await addDoc(collection(db, "orders"), orderData);
+    setOrderDocId(docRef.id);
+
+    const resp = await fetch(`${API_BASE}/create-order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: Math.round(total * 100),
+        currency: "INR",
+        receipt: docRef.id
+      })
+    });
+
+    const data = await resp.json();
+
+    if (!data.order) {
+      alert("Failed to initialize payment. Try again.");
+      setIsProcessing(false);
+      return;
+    }
+
+    const razorOrder = data.order;
+    const key = data.key_id;
+
     const options = {
-      key: preloadedKey,
-      amount: preloadedOrder.amount,
-      currency: preloadedOrder.currency,
+      key: key,
+      amount: razorOrder.amount,
+      currency: razorOrder.currency,
       name: "Ryzen Store",
-      description: "Payment for Order",
-      order_id: preloadedOrder.id,
+      description: "Order Payment",
+      order_id: razorOrder.id,
 
       handler: async (response) => {
-        try {
-          // Verify on backend
-          await fetch(`${API_BASE}/verify-payment`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(response)
-          });
+        await updateDoc(firestoreDoc(db, "orders", docRef.id), {
+          status: "Paid",
+          payment: {
+            id: response.razorpay_payment_id,
+            order_id: response.razorpay_order_id,
+            signature: response.razorpay_signature,
+            paidAt: serverTimestamp()
+          }
+        });
 
-          // Update Firestore to Paid
-          await updateDoc(firestoreDoc(db, "orders", orderDocId), {
-            status: "Paid",
-            payment: {
-              id: response.razorpay_payment_id,
-              order_id: response.razorpay_order_id,
-              signature: response.razorpay_signature,
-              paidAt: serverTimestamp()
-            }
-          });
+await emailjs.send(
+  "service_gmail",
+  "template_ufcvumq",
+  {
+    order_id: docRef.id,
+    name: shippingAddress.name,
+    price: total.toFixed(2),
+    email: "ryzensport64@gmail.com",   // always receive
+    orders: itemsToUse
+      .map(
+        (item) =>
+          `${item.name} (Size: ${item.size}) × ${item.quantity} — ₹${
+            parseFloat(item.currentPrice.replace("₹", "")) * item.quantity
+          }`
+      )
+      .join("<br>"),
 
-          await reduceStock();
-          clearCart();
+    product_images: itemsToUse
+      .map(
+        (item) =>
+          `<img src="${item.image}" width="100" style="margin:5px; border-radius:8px;" />`
+      )
+      .join(""),
 
-          setPaymentSuccess(true);
+    shipping_address: `
+      ${shippingAddress.name}<br>
+      ${shippingAddress.address}<br>
+      ${shippingAddress.city}, ${shippingAddress.state} - ${shippingAddress.zipCode}<br>
+      ${shippingAddress.country}<br>
+      Phone: ${shippingAddress.phone}
+    `,
+  },
+  "GhbnU4GVjsYtlE4Di"
+);
 
-          setTimeout(() => {
-            window.location.href = "/order-history";
-          }, 3000);
+        await reduceStock();
+        clearCart();
 
-        } catch (err) {
-          console.error("Payment processing error:", err);
-          alert("Problem verifying payment.");
-        }
+        setPaymentSuccess(true);
+
+        setTimeout(() => {
+          window.location.href = "/order-history";
+        }, 3000);
       },
 
       prefill: {
         name: shippingAddress.name,
-        email: user.email || user.username,
+        email: user?.email || user?.username,
         contact: shippingAddress.phone || "",
       },
 
-      theme: {
-        color: "#3399cc",
-      },
+      theme: { color: "#3399cc" },
 
       modal: {
         ondismiss: async () => {
+          await updateDoc(firestoreDoc(db, "orders", docRef.id), {
+            status: "Cancelled",
+            cancelledAt: serverTimestamp()
+          });
+
           setIsProcessing(false);
-
-          try {
-            await updateDoc(firestoreDoc(db, "orders", orderDocId), {
-              status: "Cancelled",
-              cancelledAt: serverTimestamp()
-            });
-          } catch (err) {
-            console.error("Cancel update error:", err);
-          }
-
           alert("Payment cancelled.");
         }
       }
@@ -221,7 +209,7 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
     <div className="payment-page">
       <h1>Payment</h1>
 
-      <div className="order-summary">
+      <div className="order-summary" style={{background:"#fff"}}>
         <h2>Order Summary</h2>
         {itemsToUse.map(item => (
           <div key={item.id} className="summary-item">
@@ -237,15 +225,45 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
       <div className="payment-options">
         <h2>Select Payment Method</h2>
 
-        <div className="payment-option">
+        <label className="payment-option">
           <input
             type="radio"
             name="payment"
             value="UPI"
             onChange={(e) => setPaymentMethod(e.target.value)}
           />
-          <p>UPI</p>
-        </div>
+          UPI
+        </label>
+
+        <label className="payment-option">
+          <input
+            type="radio"
+            name="payment"
+            value="CARD"
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          />
+          Debit / Credit Card
+        </label>
+
+        <label className="payment-option">
+          <input
+            type="radio"
+            name="payment"
+            value="NETBANKING"
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          />
+          Netbanking
+        </label>
+
+        <label className="payment-option">
+          <input
+            type="radio"
+            name="payment"
+            value="WALLET"
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          />
+          Wallets
+        </label>
       </div>
 
       <button

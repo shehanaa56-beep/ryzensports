@@ -5,10 +5,11 @@ import { LoginProvider } from './LoginContext';
 import { UNSAFE_DataRouterContext, UNSAFE_DataRouterStateContext } from 'react-router-dom';
 import './firebase';
 import Offer from './Offer';
+import Testimonials from './Testimonials';
 import Header from './Header';
 import Shop from './Shop';
 import Collection from './Collection';
-import Insta from './Insta';
+import ShopByCollection from "./ShopByCollection";
 import About from './About';
 import Footer from './Footer';
 import Outlet from './Outlet';
@@ -21,7 +22,8 @@ import OrderHistoryModal from './OrderHistoryModal';
 import AdminDashboard from './AdminDashboard';
 import Wishlist from './Wishlist';
 import CustomerSupport from './CustomerSupport';
-
+// ⭐ NEW IMPORT
+import WhatsAppButton from './WhatsAppButton';
 function App() {
   return (
     <LoginProvider>
@@ -37,21 +39,21 @@ function App() {
             <Routes>
               <Route path="/" element={
                 <>
-                  {/* Announcement Bar */}
-                  <div className="announcement">
-                    NEXT-GEN GST REFORM: NEW GST RATES NOW IN EFFECT ON APPLICABLE PRODUCTS
-                  </div>
                   
                   {/* Hero Banner */}
                   <section className="hero">
                    
                   </section>
-                  {/* Insta Section */}
-                  <Insta />
-                  {/* About Section */}
-                  <About />
+              <ShopByCollection />
+
                   {/* Collection Section */}
                   <Collection />
+
+                  {/* About Section */}
+                  <About />
+                    {/* ⭐ Testimonials Section */}
+    <Testimonials />
+
                 </>
               } />
               <Route path="/outlet" element={<Outlet />} />
@@ -68,6 +70,9 @@ function App() {
 
             {/* Footer */}
             <Footer />
+            
+            {/* ⭐ FLOATING WHATSAPP BUTTON */}
+            <WhatsAppButton />
           </div>
         </Router>
       </CartProvider>

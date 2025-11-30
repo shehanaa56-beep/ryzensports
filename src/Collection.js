@@ -97,7 +97,7 @@ function Collection() {
   }, []);
 
   return (
-    <div style={{ padding: '40px 20px', backgroundColor: '#000' }}>
+    <div style={{ padding: '40px 20px', backgroundColor: '#fff',color: '#000' }}>
       <div
         style={{
           display: 'flex',
@@ -110,7 +110,7 @@ function Collection() {
       >
         <h2
           style={{
-            color: '#fff',
+            color: '#100f0fff',
             fontSize: '1.8rem',
             fontWeight: '800',
             textTransform: 'uppercase'
@@ -121,7 +121,7 @@ function Collection() {
         <a
           href="#shop"
           style={{
-            color: '#fff',
+            color: '#131212ff',
             textDecoration: 'underline',
             fontWeight: '600',
             fontSize: '1rem'
@@ -141,8 +141,8 @@ function Collection() {
           >
             <div
               style={{
-                backgroundColor: '#000',
-                color: '#fff',
+                backgroundColor: '#faf6f6ff',
+                color: '#0f0d0dff',
                 border: '1px solid #333',
                 borderRadius: '12px',
                 overflow: 'hidden',
@@ -157,7 +157,7 @@ function Collection() {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  backgroundColor: '#000',
+                  backgroundColor: '#f9f8f8ff',
                   height: '220px',
                   overflow: 'hidden',
                 }}
@@ -242,7 +242,8 @@ function Collection() {
               {/* Product Info */}
               <div
                 style={{
-                  backgroundColor: '#000',
+                  backgroundColor: '#ffffff',
+                  color: '#000',
                   padding: '10px',
                   textAlign: 'center',
                   borderTop: '1px solid #333',
@@ -252,7 +253,7 @@ function Collection() {
                   style={{
                     fontSize: '0.9rem',
                     fontWeight: '700',
-                    color: '#fff',
+                    color: '#0a0a0aff',
                     marginBottom: '4px',
                     textTransform: 'uppercase',
                   }}
@@ -263,7 +264,7 @@ function Collection() {
                 <p
                   style={{
                     fontSize: '0.8rem',
-                    color: '#bbb',
+                    color: '#1d1b1bff',
                     marginBottom: '6px',
                   }}
                 >
@@ -293,7 +294,7 @@ function Collection() {
                   <span
                     style={{
                       textDecoration: 'line-through',
-                      color: '#999',
+                      color: '#534e4eff',
                       fontSize: '0.9rem',
                     }}
                   >

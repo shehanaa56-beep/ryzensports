@@ -1,0 +1,121 @@
+.shop-collection {
+  text-align: center;
+  padding: 40px 0;
+  background-color: aliceblue;
+}
+
+.shop-collection h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #0b0909;
+}
+
+/* Desktop & Tablet Layout */
+.collection-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 5px 10px 15px;
+  scroll-behavior: smooth;
+}
+
+.collection-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.collection-row::-webkit-scrollbar-thumb {
+  background: aliceblue;
+  border-radius: 5px;
+}
+
+/* Each item */
+.collection-item {
+  text-align: center;
+  width: 150px;
+  min-width: 150px; /* required for smooth mobile scroll */
+  cursor: pointer;
+}
+
+/* Circular image */
+.collection-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 12px;
+  background: #3e3838;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collection-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collection-item p {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+  line-height: 1.3;
+  color: #0b0909;
+}
+
+/* ============================
+   📱 MOBILE RESPONSIVE DESIGN
+   ============================ */
+
+@media (max-width: 768px) {
+  .shop-collection {
+    padding: 25px 0;
+  }
+
+  .shop-collection h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .collection-row {
+    gap: 20px;
+    overflow-x: scroll;
+  }
+
+  .collection-item {
+    width: 110px;
+    min-width: 110px;
+  }
+
+  .collection-img {
+    width: 110px;
+    height: 110px;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.2);
+  }
+
+  .collection-item p {
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 480px) {
+  .collection-item {
+    width: 95px;
+    min-width: 95px;
+  }
+
+  .collection-img {
+    width: 95px;
+    height: 95px;
+  }
+
+  .collection-item p {
+    font-size: 11px;
+  }
+}

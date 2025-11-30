@@ -8,7 +8,6 @@ function Footer() {
       <div className="footer-container">
         {/* ===== Brand Section ===== */}
         <div className="footer-brand">
-          <h2 className="footer-logo">Ryzen<span>Sports</span></h2>
           <p className="footer-tagline">
             Elevate your game with premium jerseys, authentic collections, and unmatched quality.
           </p>

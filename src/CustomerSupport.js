@@ -162,7 +162,7 @@ function CustomerSupport() {
                 Describe your enquiry <span className="required">*</span>
               </label>
               <p className="field-description">Provide detailed information about your issue or request.</p>
-              <textarea
+              <textarea style={{backgroundColor: '#f9f5f5'}}
                 name="enquiry"
                 value={formData.enquiry}
                 onChange={handleInputChange}
