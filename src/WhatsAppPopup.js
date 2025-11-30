@@ -2,7 +2,7 @@ import React from "react";
 import "./WhatsAppPopup.css";
 
 function WhatsAppPopup({ onClose }) {
-  const phone = "9037258541"; // your number
+  const phone = "9562186478"; // your number
   const message = "hey there, I have a query";
 
   const openWhatsApp = () => {
