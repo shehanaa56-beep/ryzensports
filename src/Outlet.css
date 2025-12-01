@@ -171,3 +171,141 @@
 .original-price {
   font-weight: 300;
 }
+.outlet-grid {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px;
+}
+
+.outlet-card {
+  min-width: 180px;
+  max-width: 180px;
+  scroll-snap-align: start;
+}
+.outlet-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+  overflow: hidden;
+  width: 180px;
+  height: auto;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+.outlet-img {
+  width: 100%;
+  height: 190px;     /* Perfect height */
+  background: #f4f4f4;
+  border-bottom: 1px solid #eee;
+}
+
+.outlet-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.outlet-info {
+  padding: 10px;
+}
+
+.outlet-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.outlet-category {
+  font-size: 0.78rem;
+  color: #666;
+}
+
+.price-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.current-price {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.original-price {
+  font-size: 0.8rem;
+  color: #999;
+  text-decoration: line-through;
+}
+/* 🔥 VIEW ALL MODE FIX */
+.outlet-grid.full {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 14px !important;
+  padding: 10px !important;
+  overflow-x: visible !important;
+}
+
+/* Remove min-width used in scroll mode */
+.outlet-grid.full .outlet-card {
+  min-width: unset !important;
+  max-width: unset !important;
+  width: 100% !important;
+  flex-shrink: unset !important;
+}
+
+/* Desktop grid for View All */
+@media (min-width: 769px) {
+  .outlet-grid.full {
+    grid-template-columns: repeat(7, 1fr) !important;
+  }
+}
+/* -----------------------------------
+   VIEW ALL AREA (Centered)
+----------------------------------- */
+
+.scroll-footer {
+  display: flex;
+  flex-direction: column;      /* stack count + button */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 15px;
+  gap: 8px;
+  width: 100%;
+}
+
+.scroll-count {
+  font-size: 14px;
+  color: #444;
+  font-weight: 500;
+}
+
+/* Blue View All button – Like reference image */
+.view-all-btn {
+  background: #00eae0 !important;   /* BLUE */
+  border: none;
+  padding: 10px 25px;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  color: black;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: 0.2s ease-in-out;
+}
+
+.view-all-btn:active {
+  transform: scale(0.96);
+}
+
+/* Back button centered as well */
+.back-btn {
+  display: block;
+  margin: 20px auto;
+  background: #eee;
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+}

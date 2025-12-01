@@ -9,7 +9,6 @@ function Outlet() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ⭐ Read selected section from Header navigation
   const selectedSection = location.state?.section || null;
 
   const [showFilterSort, setShowFilterSort] = useState(false);
@@ -19,15 +18,16 @@ function Outlet() {
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  // ⭐ View All mode
+  const [viewAll, setViewAll] = useState(false);
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ----------------------------------------
-  // FETCH FIRESTORE PRODUCTS
-  // ----------------------------------------
+  // FETCH PRODUCTS
   useEffect(() => {
     const fetchOutletProducts = async () => {
       try {
@@ -58,25 +58,16 @@ function Outlet() {
     fetchOutletProducts();
   }, []);
 
-  const handleFilterSortClick = () => setShowFilterSort(true);
-  const handleCloseFilterSort = () => setShowFilterSort(false);
-
-  // ----------------------------------------
-  // FILTERED LISTS
-  // ----------------------------------------
   const fullSleeves = filteredProducts.filter((p) => p.section === "fullsleeves");
   const halfSleeves = filteredProducts.filter((p) => p.section === "halfsleeves");
   const oversized = filteredProducts.filter((p) => p.section === "oversized");
 
-  // ----------------------------------------
   // PRODUCT CARD
-  // ----------------------------------------
   const renderProductCard = (product) => {
     const discount =
       product.originalPrice && product.currentPrice
         ? Math.round(
-            ((product.originalPrice - product.currentPrice) / product.originalPrice) *
-              100
+            ((product.originalPrice - product.currentPrice) / product.originalPrice) * 100
           )
         : null;
 
@@ -134,73 +125,75 @@ function Outlet() {
     );
   };
 
-  // ----------------------------------------
-  // Section Wrapper
-  // ----------------------------------------
+  // SECTION BLOCK
   const SectionBlock = ({ title, list }) => (
     <div className="outlet-section">
       <h2 className="section-title">{title}</h2>
 
-      <div
-        className="outlet-grid"
-        style={{
-          gridTemplateColumns: isMobile
-            ? "repeat(2, 1fr)"
-            : "repeat(4, 1fr)",
-        }}
-      >
-        {list.map((product) => renderProductCard(product))}
-      </div>
+      {!viewAll ? (
+        <>
+          {/* ⭐ Horizontal scroll for mobile */}
+          <div className="outlet-grid">{list.map(renderProductCard)}</div>
+
+          <div className="scroll-footer">
+            <div className="scroll-count">1 / {list.length}</div>
+
+            <button className="view-all-btn" onClick={() => setViewAll(true)}>
+              View all
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* ⭐ FULL GRID MODE */}
+          <div className="outlet-grid full">{list.map(renderProductCard)}</div>
+
+          <button className="back-btn" onClick={() => setViewAll(false)}>
+            Back
+          </button>
+        </>
+      )}
     </div>
   );
 
-  // ----------------------------------------
-  // ⭐ SHOW ONLY THE SELECTED SECTION
-  // ----------------------------------------
   const renderSelectedSection = () => {
     if (selectedSection === "fullsleeves") {
-      return <SectionBlock title="Fullsleeve's" list={fullSleeves} />;
+      return <SectionBlock title="FULLSLEEVE'S" list={fullSleeves} />;
     }
     if (selectedSection === "halfsleeves") {
-      return <SectionBlock title="Halfsleeve's" list={halfSleeves} />;
+      return <SectionBlock title="HALFSLEEVE'S" list={halfSleeves} />;
     }
     if (selectedSection === "oversized") {
-      return <SectionBlock title="Oversized" list={oversized} />;
+      return <SectionBlock title="OVERSIZED" list={oversized} />;
     }
 
-    // DEFAULT: show all sections if user opens Outlet without selecting
     return (
       <>
-        <SectionBlock title="Fullsleeve's" list={fullSleeves} />
-        <SectionBlock title="Halfsleeve's" list={halfSleeves} />
-        <SectionBlock title="Oversized" list={oversized} />
+        <SectionBlock title="FULLSLEEVE'S" list={fullSleeves} />
+        <SectionBlock title="HALFSLEEVE'S" list={halfSleeves} />
+        <SectionBlock title="OVERSIZED" list={oversized} />
       </>
     );
   };
 
-  // ----------------------------------------
-  // FINAL RETURN
-  // ----------------------------------------
   return (
-    <div style={{ backgroundColor: "#fff",color:'#312d2dff',minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#fff", color: "#312d2dff", minHeight: "100vh" }}>
       <section className="header-banner">
         <h1>JERSEY, HALF SLEEVE AND FULL SLEEVE: UP TO 60% OFF</h1>
         <p>[{filteredProducts.length}]</p>
       </section>
 
       <div className="filter-box">
-        <button className="filter-btn" onClick={handleFilterSortClick}>
+        <button className="filter-btn" onClick={() => setShowFilterSort(true)}>
           FILTER & SORT ☰
         </button>
       </div>
 
-      <section>
-        {loading ? <div>Loading…</div> : renderSelectedSection()}
-      </section>
+      <section>{loading ? <div>Loading…</div> : renderSelectedSection()}</section>
 
       {showFilterSort && (
         <FilterSort
-          onClose={handleCloseFilterSort}
+          onClose={() => setShowFilterSort(false)}
           itemCount={filteredProducts.length}
         />
       )}

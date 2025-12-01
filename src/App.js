@@ -48,6 +48,7 @@ function App() {
 
                   {/* Collection Section */}
                   <Collection />
+                  <Outlet />
 
                   {/* About Section */}
                   <About />
