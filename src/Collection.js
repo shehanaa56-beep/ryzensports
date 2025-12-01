@@ -2,219 +2,250 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from './firebase';
+import "./Outlet.css"; // ⭐ reuse same styles for scroll + view-all button
 
 function Collection() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [viewAll, setViewAll] = useState(false); // ⭐ NEW
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchHomeProducts = async () => {
       try {
-        const q = query(collection(db, 'products'), where('section', '==', 'home'));
-        const querySnapshot = await getDocs(q);
-        const productsData = querySnapshot.docs.map(doc => ({
+        const q = query(collection(db, "products"), where("section", "==", "home"));
+        const snap = await getDocs(q);
+
+        const productsData = snap.docs.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         }));
+
         setProducts(productsData);
       } catch (error) {
-        console.error('Error fetching home products:', error);
-        // fallback data
+        console.error("Error fetching home products:", error);
+
         setProducts([
           {
-            id: '1',
-            name: 'Galaxy 6 Shoes',
-            category: 'Performance',
-            currentPrice: '₹2400',
-            originalPrice: '₹5999',
-            discount: '60%',
-            image: '/images/s1.png'
+            id: "1",
+            name: "Galaxy 6 Shoes",
+            category: "Performance",
+            currentPrice: "₹2400",
+            originalPrice: "₹5999",
+            discount: "60%",
+            image: "/images/s1.png",
           },
           {
-            id: '2',
-            name: 'ADVANTAGE BASE SHOES',
-            category: 'Sportswear',
-            currentPrice: '₹2499',
-            originalPrice: '₹6599',
-            discount: '65%',
-            image: '/images/s5.png'
+            id: "2",
+            name: "ADVANTAGE BASE SHOES",
+            category: "Sportswear",
+            currentPrice: "₹2499",
+            originalPrice: "₹6599",
+            discount: "65%",
+            image: "/images/s5.png",
           },
           {
-            id: '3',
-            name: 'Lite Racer 3.0 Shoes',
-            category: 'Sportswear',
-            currentPrice: '₹2240',
-            originalPrice: '₹5599',
-            discount: '60%',
-            image: '/images/s6.png'
+            id: "3",
+            name: "Lite Racer 3.0 Shoes",
+            category: "Sportswear",
+            currentPrice: "₹2240",
+            originalPrice: "₹5599",
+            discount: "60%",
+            image: "/images/s6.png",
           },
           {
-            id: '4',
-            name: 'Ultraboost 20 Shoes',
-            category: 'Performance',
-            currentPrice: '₹7600',
-            originalPrice: '₹18999',
-            discount: '60%',
-            image: '/images/s2.png'
+            id: "4",
+            name: "Ultraboost 20 Shoes",
+            category: "Performance",
+            currentPrice: "₹7600",
+            originalPrice: "₹18999",
+            discount: "60%",
+            image: "/images/s2.png",
           },
           {
-            id: '5',
-            name: 'Running Sport Shoes',
-            category: 'Performance',
-            currentPrice: '₹3000',
-            originalPrice: '₹6000',
-            discount: '50%',
-            image: '/images/s3.png'
-          }
+            id: "5",
+            name: "Running Sport Shoes",
+            category: "Performance",
+            currentPrice: "₹3000",
+            originalPrice: "₹6000",
+            discount: "50%",
+            image: "/images/s3.png",
+          },
         ]);
       }
     };
+
     fetchHomeProducts();
   }, []);
 
+
+
+  // ⭐ MOBILE & DESKTOP GRID
   const getGridStyle = () => {
-    if (window.innerWidth <= 768) {
+    if (viewAll) {
       return {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: '12px',
-      };
-    } else {
-      return {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(5, 1fr)',
-        gap: '20px',
+        display: "grid",
+        gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(5, 1fr)",
+        gap: "16px",
+        padding: "10px",
       };
     }
+
+    // ⭐ Horizontal Scroll mode (mobile)
+    if (isMobile) {
+      return {
+        display: "flex",
+        gap: "16px",
+        overflowX: "auto",
+        scrollSnapType: "x mandatory",
+        paddingBottom: "10px",
+      };
+    }
+
+    // ⭐ Desktop default layout
+    return {
+      display: "grid",
+      gridTemplateColumns: "repeat(5, 1fr)",
+      gap: "20px",
+    };
   };
 
-  const [gridStyle, setGridStyle] = useState(getGridStyle());
-
-  useEffect(() => {
-    const handleResize = () => setGridStyle(getGridStyle());
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
-    <div style={{ padding: '40px 20px', backgroundColor: '#fff',color: '#000' }}>
+    <div style={{ padding: "40px 20px", backgroundColor: "#fff", color: "#000" }}>
+      
+      {/* TITLE */}
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '30px',
-          borderBottom: '1px solid #333',
-          paddingBottom: '10px'
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "30px",
+          borderBottom: "1px solid #333",
+          paddingBottom: "10px",
         }}
       >
         <h2
           style={{
-            color: '#100f0fff',
-            fontSize: '1.8rem',
-            fontWeight: '800',
-            textTransform: 'uppercase'
+            color: "#100f0fff",
+            fontSize: "1.8rem",
+            fontWeight: "800",
+            textTransform: "uppercase",
           }}
         >
           BEST SELLER
         </h2>
-        <a
-          href="#shop"
-          style={{
-            color: '#131212ff',
-            textDecoration: 'underline',
-            fontWeight: '600',
-            fontSize: '1rem'
-          }}
-        >
-          Shop now
-        </a>
+
+        {!viewAll && (
+          <a
+            href="#shop"
+            style={{
+              color: "#131212ff",
+              textDecoration: "underline",
+              fontWeight: "600",
+              fontSize: "1rem",
+            }}
+          >
+            Shop now
+          </a>
+        )}
       </div>
 
-      {/* Product Grid */}
-      <div style={gridStyle}>
-        {products.map((product) => (
+
+      {/* ⭐ PRODUCTS SECTION */}
+      <div style={getGridStyle()}>
+        {products.map(product => (
           <Link
             key={product.id}
             to={`/product/${product.id}`}
-            style={{ textDecoration: 'none' }}
+            style={{ textDecoration: "none" }}
           >
+
+            {/* ORIGINAL PRODUCT CARD — UNCHANGED */}
             <div
               style={{
-                backgroundColor: '#faf6f6ff',
-                color: '#0f0d0dff',
-                border: '1px solid #333',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                boxShadow: '0 0 10px rgba(0,0,0,0.6)',
-                transition: 'transform 0.3s ease',
+                backgroundColor: "#faf6f6ff",
+                color: "#0f0d0dff",
+                border: "1px solid #333",
+                borderRadius: "12px",
+                overflow: "hidden",
+                boxShadow: "0 0 10px rgba(0,0,0,0.6)",
+                transition: "transform 0.3s ease",
+                minWidth: isMobile && !viewAll ? "180px" : "auto", // ⭐ for scroll mode
+                scrollSnapAlign: "start",
               }}
             >
-              {/* Image Container */}
+
               <div
                 style={{
-                  position: 'relative',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: '#f9f8f8ff',
-                  height: '220px',
-                  overflow: 'hidden',
+                  position: "relative",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#f9f8f8ff",
+                  height: "220px",
+                  overflow: "hidden",
                 }}
               >
                 <span
                   style={{
-                    position: 'absolute',
-                    top: '8px',
-                    left: '8px',
-                    backgroundColor: '#f8f8f8',
-                    color: '#000',
-                    fontWeight: '600',
-                    fontSize: '10px',
-                    padding: '2px 6px',
-                    borderRadius: '2px',
-                    textTransform: 'uppercase',
+                    position: "absolute",
+                    top: "8px",
+                    left: "8px",
+                    backgroundColor: "#f8f8f8",
+                    color: "#000",
+                    fontWeight: "600",
+                    fontSize: "10px",
+                    padding: "2px 6px",
+                    borderRadius: "2px",
+                    textTransform: "uppercase",
                   }}
                 >
                   Sale
                 </span>
 
+                {/* Wishlist button unchanged */}
                 <button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    const savedWishlist = localStorage.getItem('wishlist');
+                    const savedWishlist = localStorage.getItem("wishlist");
                     let wishlist = savedWishlist ? JSON.parse(savedWishlist) : [];
                     const isInWishlist = wishlist.some(item => item.id === product.id);
                     if (!isInWishlist) {
                       wishlist.push(product);
-                      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+                      localStorage.setItem("wishlist", JSON.stringify(wishlist));
                     }
-                    navigate('/wishlist');
+                    navigate("/wishlist");
                   }}
                   style={{
-                    position: 'absolute',
-                    top: '8px',
-                    right: '8px',
-                    background: 'rgba(255,255,255,0.1)',
-                    border: 'none',
-                    borderRadius: '50%',
-                    padding: '4px',
-                    cursor: 'pointer',
+                    position: "absolute",
+                    top: "8px",
+                    right: "8px",
+                    background: "rgba(255,255,255,0.1)",
+                    border: "none",
+                    borderRadius: "50%",
+                    padding: "4px",
+                    cursor: "pointer",
                   }}
                 >
                   <svg
                     viewBox="0 0 24 24"
                     style={{
-                      width: '20px',
-                      height: '20px',
+                      width: "20px",
+                      height: "20px",
                       fill:
-                        localStorage.getItem('wishlist') &&
-                        JSON.parse(localStorage.getItem('wishlist')).some(
+                        localStorage.getItem("wishlist") &&
+                        JSON.parse(localStorage.getItem("wishlist")).some(
                           item => item.id === product.id
                         )
-                          ? 'red'
-                          : '#fff',
+                          ? "red"
+                          : "#fff",
                     }}
                   >
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 
@@ -230,85 +261,82 @@ function Collection() {
                   src={product.image}
                   alt={product.name}
                   style={{
-                    width: '110%',
-                    height: 'auto',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    display: 'block',
+                    width: "110%",
+                    height: "auto",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    display: "block",
                   }}
                 />
               </div>
 
-              {/* Product Info */}
               <div
                 style={{
-                  backgroundColor: '#ffffff',
-                  color: '#000',
-                  padding: '10px',
-                  textAlign: 'center',
-                  borderTop: '1px solid #333',
+                  backgroundColor: "#ffffff",
+                  color: "#000",
+                  padding: "10px",
+                  textAlign: "center",
+                  borderTop: "1px solid #333",
                 }}
               >
                 <h3
                   style={{
-                    fontSize: '0.9rem',
-                    fontWeight: '700',
-                    color: '#0a0a0aff',
-                    marginBottom: '4px',
-                    textTransform: 'uppercase',
+                    fontSize: "0.9rem",
+                    fontWeight: "700",
+                    color: "#0a0a0aff",
+                    marginBottom: "4px",
+                    textTransform: "uppercase",
                   }}
                 >
                   {product.name}
                 </h3>
-
                 <p
                   style={{
-                    fontSize: '0.8rem',
-                    color: '#1d1b1bff',
-                    marginBottom: '6px',
+                    fontSize: "0.8rem",
+                    color: "#1d1b1bff",
+                    marginBottom: "6px",
                   }}
                 >
                   {product.category}
                 </p>
 
-                {/* ✅ Updated Price Section */}
                 <div
                   style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: '6px',
-                    marginTop: '8px',
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "6px",
+                    marginTop: "8px",
                   }}
                 >
                   <span
                     style={{
-                      color: '#c7ad38ff',
-                      fontWeight: '700',
-                      fontSize: '1rem',
+                      color: "#c7ad38ff",
+                      fontWeight: "700",
+                      fontSize: "1rem",
                     }}
                   >
-                    {product.currentPrice.replace('₹', '')}
+                    {product.currentPrice.replace("₹", "")}
                   </span>
 
                   <span
                     style={{
-                      textDecoration: 'line-through',
-                      color: '#534e4eff',
-                      fontSize: '0.9rem',
+                      textDecoration: "line-through",
+                      color: "#534e4eff",
+                      fontSize: "0.9rem",
                     }}
                   >
-                    {product.originalPrice.replace('₹', '')}
+                    {product.originalPrice.replace("₹", "")}
                   </span>
 
                   <span
                     style={{
-                      backgroundColor: '#e0ceceff',
-                      color: '#000',
-                      fontWeight: '700',
-                      fontSize: '0.8rem',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
+                      backgroundColor: "#e0ceceff",
+                      color: "#000",
+                      fontWeight: "700",
+                      fontSize: "0.8rem",
+                      padding: "2px 6px",
+                      borderRadius: "4px",
                     }}
                   >
                     {product.discount}
@@ -319,6 +347,25 @@ function Collection() {
           </Link>
         ))}
       </div>
+
+      {/* ⭐ COUNT + VIEW ALL BUTTON (Center UI like your inspiration) */}
+      {!viewAll && isMobile && (
+        <div className="scroll-footer">
+          <div className="scroll-count">1 / {products.length}</div>
+
+          <button className="view-all-btn" onClick={() => setViewAll(true)}>
+            View all
+          </button>
+        </div>
+      )}
+
+      {/* ⭐ BACK BUTTON in View All Mode */}
+      {viewAll && (
+        <button className="back-btn" onClick={() => setViewAll(false)}>
+          Back
+        </button>
+      )}
+
     </div>
   );
 }
