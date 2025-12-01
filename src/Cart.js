@@ -40,9 +40,14 @@ function Cart() {
                   <div className="quantity-controls">
                     <button
                       type="button"
-                      onClick={() =>
-                        updateQuantity(item.id, item.size, item.quantity - 1)
-                      }
+                      onClick={() => {
+                        const newQty = item.quantity - 1;
+                        if (newQty < 1) {
+                          removeFromCart(item.id, item.size);   // ⭐ Prevent quantity going below 1
+                        } else {
+                          updateQuantity(item.id, item.size, newQty);
+                        }
+                      }}
                     >
                       -
                     </button>
