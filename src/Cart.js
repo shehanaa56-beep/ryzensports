@@ -1,33 +1,28 @@
 import React from 'react';
 import { useCart } from './CartContext';
-import { useLogin } from './LoginContext';
 import { useNavigate } from 'react-router-dom';
 import './Cart.css';
 
 function Cart() {
   const { cartItems, removeFromCart, updateQuantity, getTotalPrice } = useCart();
-  const { isLoggedIn, openModal } = useLogin();
   const navigate = useNavigate();
 
+  // ✅ Checkout allowed for everyone
   const handleCheckout = () => {
-    if (isLoggedIn) {
-      navigate('/checkout');
-    } else {
-      openModal();
-    }
+    navigate('/checkout');
   };
 
   return (
     <div className="cart-page">
       <h1>Your Bag</h1>
+
       {cartItems.length === 0 ? (
         <p>Your bag is empty.</p>
       ) : (
         <div className="cart-content">
           <div className="cart-items">
-            {cartItems.map((item, index) => (
+            {cartItems.map((item) => (
               <div key={`${item.id}-${item.size}`} className="cart-item">
-                {/* ❌ Mobile cross icon */}
                 <button
                   className="remove-icon"
                   onClick={() => removeFromCart(item.id, item.size)}
@@ -36,6 +31,7 @@ function Cart() {
                 </button>
 
                 <img src={item.image} alt={item.name} className="cart-item-image" />
+
                 <div className="cart-item-details">
                   <h3>{item.name}</h3>
                   <p>Size: {item.size}</p>
@@ -44,26 +40,25 @@ function Cart() {
                   <div className="quantity-controls">
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        updateQuantity(item.id, item.size, item.quantity - 1);
-                      }}
+                      onClick={() =>
+                        updateQuantity(item.id, item.size, item.quantity - 1)
+                      }
                     >
                       -
                     </button>
+
                     <span>{item.quantity}</span>
+
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        updateQuantity(item.id, item.size, item.quantity + 1);
-                      }}
+                      onClick={() =>
+                        updateQuantity(item.id, item.size, item.quantity + 1)
+                      }
                     >
                       +
                     </button>
                   </div>
 
-                  {/* 🖱️ Desktop Remove button */}
                   <button
                     onClick={() => removeFromCart(item.id, item.size)}
                     className="remove-item"
@@ -78,9 +73,11 @@ function Cart() {
           <div className="cart-summary">
             <h2>Order Summary</h2>
             <p>Total: ₹{getTotalPrice().toFixed(2)}</p>
+
+            {/* No login check anymore */}
             <button className="checkout-button" onClick={handleCheckout}>
-              {isLoggedIn ? ' Checkout' : 'Checkout'}
-                                                                                          </button>
+              Checkout
+            </button>
           </div>
         </div>
       )}
