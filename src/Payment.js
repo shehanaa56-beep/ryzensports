@@ -122,40 +122,43 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
           }
         });
 
-await emailjs.send(
-  "service_gmail",
-  "template_ufcvumq",
-  {
-    order_id: docRef.id,
-    name: shippingAddress.name,
-    price: total.toFixed(2),
-    email: "ryzensport64@gmail.com",   // always receive
-    orders: itemsToUse
-      .map(
-        (item) =>
-          `${item.name} (Size: ${item.size}) × ${item.quantity} — ₹${
-            parseFloat(item.currentPrice.replace("₹", "")) * item.quantity
-          }`
-      )
-      .join("<br>"),
+        // ⭐ SAFELY send email without crashing ⭐
+        try {
+          await emailjs.send(
+            "service_gmail",
+            "template_ufcvumq",
+            {
+              order_id: docRef.id,
+              name: shippingAddress.name,
+              price: total.toFixed(2),
+              email: "ryzensport64@gmail.com",
 
-    product_images: itemsToUse
-      .map(
-        (item) =>
-          `<img src="${item.image}" width="100" style="margin:5px; border-radius:8px;" />`
-      )
-      .join(""),
+              // TEXT-ONLY — safe for EmailJS
+              orders: itemsToUse
+                .map(
+                  (item) =>
+                    `${item.name} | Size: ${item.size} | Qty: ${item.quantity} | Price: ₹${
+                      parseFloat(item.currentPrice.replace("₹", "")) * item.quantity
+                    }`
+                )
+                .join("\n"),
 
-    shipping_address: `
-      ${shippingAddress.name}<br>
-      ${shippingAddress.address}<br>
-      ${shippingAddress.city}, ${shippingAddress.state} - ${shippingAddress.zipCode}<br>
-      ${shippingAddress.country}<br>
-      Phone: ${shippingAddress.phone}
-    `,
-  },
-  "GhbnU4GVjsYtlE4Di"
-);
+              // Send only URLs (NO <img>)
+              product_images: itemsToUse.map((item) => item.image).join("\n"),
+
+              shipping_address: `
+${shippingAddress.name}
+${shippingAddress.address}
+${shippingAddress.city}, ${shippingAddress.state} - ${shippingAddress.zipCode}
+${shippingAddress.country}
+Phone: ${shippingAddress.phone}
+              `,
+            },
+            "GhbnU4GVjsYtlE4Di"
+          );
+        } catch (err) {
+          console.error("EmailJS Error:", err);
+        }
 
         await reduceStock();
         clearCart();
