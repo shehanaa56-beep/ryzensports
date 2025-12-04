@@ -123,7 +123,7 @@ function Header() {
           {/* LOGO */}
           <div className="logo" style={{ flex: '0 0 auto', marginRight: '40px' }}>
             <Link to="/">
-              <img src="/images/ryz.png" alt="Ryzen Sport Logo" className="logo-img" style={{ width: 'auto', cursor: 'pointer' }} />
+              <img src="/images/ryz.png" alt="Ryzen Sport Logo" className="logo-img" style={{ width: '50px',height:'30px', cursor: 'pointer' }} />
             </Link>
           </div>
 
@@ -207,7 +207,7 @@ function Header() {
           <nav>
             <ul style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'center' }}>
               <li><Link to="/" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>HOME</Link></li>
-                            <li><Link to="/sizechart" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>SIZECHART</Link></li>
+              <li><Link to="/sizechart" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>SIZECHART</Link></li>
               <li><Link to="/faq" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>FAQ</Link></li>
               <li><Link to="/customer-support" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>CUSTOMER SUPPORT</Link></li>
               <li><Link to="/outlet" style={navLinkStyle} onClick={() => setIsMenuOpen(false)}>OUTLET</Link></li>
