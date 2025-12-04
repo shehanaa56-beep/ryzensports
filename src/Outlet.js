@@ -178,7 +178,7 @@ function Outlet() {
 
   return (
     <div style={{ backgroundColor: "#fff", color: "#312d2dff", minHeight: "100vh" }}>
-      <section className="header-banner">
+      <section className="header-banner" style={{fontFamily:'times new roman',fontSize:'.8rem',fontWeight:'700',textTransform:'uppercase'}}>
         <h1>JERSEY, HALF SLEEVE AND FULL SLEEVE: UP TO 60% OFF</h1>
         <p>[{filteredProducts.length}]</p>
       </section>

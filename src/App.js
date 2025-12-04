@@ -24,6 +24,7 @@ import Wishlist from './Wishlist';
 import CustomerSupport from './CustomerSupport';
 // ⭐ NEW IMPORT
 import WhatsAppButton from './WhatsAppButton';
+import SizeChart from './SizeChart';
 function App() {
   return (
     <LoginProvider>
@@ -67,6 +68,7 @@ function App() {
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/customer-support" element={<CustomerSupport />} />
+              <Route path="/sizechart" element={<SizeChart />} />
             </Routes>
 
             {/* Footer */}

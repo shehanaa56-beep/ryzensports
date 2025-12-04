@@ -211,11 +211,11 @@ function ProductDetails() {
         </div>
 
         <div className="product-info" >
-          <h1>{product.name}</h1>
-          <p className="category">{product.category}</p>
+          <h1 style={{fontFamily:'times new roman',textAlign:'left',fontSize:'1.5rem'}}>{product.name}</h1>
+          <p className="category" style={{fontFamily:'times new roman',textAlign:'left',fontSize:'1rem'}}>{product.category}</p>
 
           <div className="price-container">
-            <span className="current-price" style={{color:"#000"}}>{product.currentPrice}</span>
+            <span className="current-price" style={{color:"#000",fontSize:'1.5rem'}}>{product.currentPrice}</span>
             <span className="original-price">{product.originalPrice}</span>
             <span className="discount">{product.discount}</span>
           </div>
@@ -279,16 +279,16 @@ function ProductDetails() {
 
           {relatedProducts.length > 0 && (
             <div className="related-products-section">
-              <h2>Related Products</h2>
+              <h2 style={{fontFamily:'times new roman'}}>Related Products</h2>
               <div className="related-products-grid">
                 {relatedProducts.map((relatedProduct) => (
                   <Link key={relatedProduct.id} to={`/product/${relatedProduct.id}`} className="product-card-link">
                     <div className="product-card">
                       <img src={relatedProduct.image} alt={relatedProduct.name} className="product-card-image" />
-                      <h3 className="product-card-name">{relatedProduct.name}</h3>
+                      <h3 className="product-card-name"style={{fontFamily:'times new roman',textAlign:'left',fontSize:'1.2rem'}}>{relatedProduct.name}</h3>
 
                       <div className="product-card-price">
-                        <span className="current-price">{relatedProduct.currentPrice}</span>
+                        <span className="current-price" style={{color:"#000",fontSize:'1rem'}}>{relatedProduct.currentPrice}</span>
                         <span className="original-price">{relatedProduct.originalPrice}</span>
                         <span className="discount">{relatedProduct.discount}</span>
                       </div>

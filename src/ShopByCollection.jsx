@@ -8,17 +8,17 @@ function ShopByCollection() {
   const collections = [
     {
       img: "/images/s7.png",
-      title: "FIVE SLEEVE JERSEYS",
+      title: "Five Sleeve Jerseys",
       section: "fivesleeves"
     },
     {
       img: "/images/s8.png",
-      title: "FULL SLEEVE JERSEYS",
+      title: "Full Sleeve Jerseys",
       section: "fullsleeves"
     },
     {
       img: "/images/s1.png",
-      title: "Black Friday sale 2025 MS Retro",
+      title: "Black Friday sale 2025",
       section: "blackfriday"
     },
     {

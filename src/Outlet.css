@@ -7,7 +7,7 @@
 .section-title {
   text-align: center;
   font-size: 1.5rem;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family:'Times New Roman', Times, serif;
   color: #222;
   margin-bottom: 25px;
 }
@@ -287,7 +287,8 @@
   border: none;
   padding: 10px 25px;
   border-radius: 14px;
-  font-size: 17px;
+  font-size: 15px;
+  font-family: 'Times New Roman', Times, serif;
   font-weight: 600;
   cursor: pointer;
   color: black;

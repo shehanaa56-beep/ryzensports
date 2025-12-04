@@ -133,9 +133,10 @@ function Collection() {
         <h2
           style={{
             color: "#100f0fff",
-            fontSize: "1.8rem",
-            fontWeight: "800",
+            fontSize: "1.2rem",
+            fontWeight: "700",
             textTransform: "uppercase",
+            fontFamily:'times new roman'
           }}
         >
           BEST SELLER
@@ -149,6 +150,7 @@ function Collection() {
               textDecoration: "underline",
               fontWeight: "600",
               fontSize: "1rem",
+              fontFamily:'times new roman'
             }}
           >
             Shop now

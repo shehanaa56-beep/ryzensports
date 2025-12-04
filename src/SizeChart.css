@@ -1,0 +1,152 @@
+/* ===============================
+   MAIN CONTAINER
+================================ */
+.size-chart-container {
+  max-width: 950px;            /* Reduced width for cleaner center */
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Arial', sans-serif;
+  color: #000;
+  background: #f6f4f4;
+  text-align: center;           /* Center alignment for title + image */
+}
+
+/* ===============================
+   TITLE
+================================ */
+.size-chart-title {
+  font-size: 2.5rem;
+  margin-bottom: 25px;
+  color:#000;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* ===============================
+   IMAGE SECTION (Beautiful Box)
+================================ */
+.size-chart-image {
+  background: #faf8f8;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 35px;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.07);
+  display: flex;
+  justify-content: center;
+}
+
+.size-chart-image img {
+  width: 85%;
+  max-width: 420px;
+  border-radius: 10px;
+}
+
+/* ===============================
+   TABLE WRAPPER (Card Style)
+================================ */
+.size-table-container {
+  background: #f8f4f4;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 0 auto 40px auto;
+  width: 100%;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.07);
+}
+
+/* ===============================
+   DESKTOP TABLE
+================================ */
+.size-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f5f3f3;
+  color: #010101;
+  font-size: 1rem;
+}
+
+.size-table th {
+  background: #222;
+  color: #51cad3;
+  padding: 12px;
+  font-weight: bold;
+  border: 1px solid #333;
+}
+
+.size-table td {
+  padding: 12px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+.size-table tbody tr:nth-child(even) {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+/* ===============================
+   IMPORTANT NOTE SECTION
+================================ */
+.important-note {
+  background: #080808;
+  color: #f8f5f5;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: left;
+  box-shadow: 0 4px 10px rgba(255,255,255,0.15);
+}
+
+.important-note h2 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+}
+
+/* ===============================
+   RESPONSIVE TABLE (MOBILE)
+================================ */
+.desktop-table {
+  display: block;
+}
+
+.mobile-table {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  .size-chart-title {
+    font-size: 2rem;
+  }
+
+  /* Hide desktop table */
+  .desktop-table {
+    display: none;
+  }
+
+  /* Show mobile table */
+  .mobile-table {
+    display: block;
+  }
+
+  .mobile-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    padding-bottom: 10px;
+  }
+
+  .mobile-version {
+    width: 700px;
+    font-size: 0.9rem;
+  }
+
+  .mobile-version th,
+  .mobile-version td {
+    white-space: nowrap;
+    padding: 10px 12px;
+  }
+
+  .size-chart-container {
+    padding: 20px;
+  }
+}
