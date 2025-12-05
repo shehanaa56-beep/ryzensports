@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { db } from './firebase';
+import { db, auth } from './firebase';
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 
 const LoginContext = createContext();
@@ -41,18 +42,31 @@ export const LoginProvider = ({ children }) => {
   }, []);
 
   const login = async (username, password) => {
-    if (username === "ryzensports@gmail.com" && password === "ryzen2244") {
+    // 🔥 Admin login using Firebase Auth
+    try {
+      const firebaseUser = await signInWithEmailAndPassword(auth, username, password);
+
+      // ⭐ UPDATED admin check (ONLY change made)
+      const isAdminAccount =
+        firebaseUser.user.email === "ryzensports@gmail.com" &&
+        password === "ryzen2244";
+
       const adminUser = {
-        username,
-        isAdmin: true,
+        username: firebaseUser.user.email,
+        uid: firebaseUser.user.uid,
+        isAdmin: isAdminAccount,
         loginTime: new Date().toISOString()
       };
+
       setUser(adminUser);
       setIsLoggedIn(true);
-      setIsAdmin(true);
+      setIsAdmin(isAdminAccount);
       localStorage.setItem('currentUser', JSON.stringify(adminUser));
       setModalOpen(false);
+
       return { success: true };
+    } catch (err) {
+      // Normal user login (unchanged)
     }
 
     const usersMap = usersCacheRef.current || {};
@@ -155,11 +169,10 @@ export const LoginProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    await signOut(auth);
     setUser(null);
     setIsLoggedIn(false);
     setIsAdmin(false);
-
-    // ⭐ DO NOT clear guestCart here
     localStorage.removeItem('currentUser');
   };
 

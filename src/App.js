@@ -25,6 +25,8 @@ import CustomerSupport from './CustomerSupport';
 // ⭐ NEW IMPORT
 import WhatsAppButton from './WhatsAppButton';
 import SizeChart from './SizeChart';
+import "@fortawesome/fontawesome-free/css/all.min.css";
+
 function App() {
   return (
     <LoginProvider>

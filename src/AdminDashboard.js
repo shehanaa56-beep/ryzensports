@@ -5,11 +5,16 @@ import {
   query, where, orderBy
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from './firebase';
+import { db, storage, auth } from './firebase';
 import './AdminDashboard.css';
+import { onAuthStateChanged } from "firebase/auth";
 
 function AdminDashboard() {
+
+  // ⭐ ALL HOOKS MUST COME FIRST
+  const [firebaseAdmin, setFirebaseAdmin] = useState(null);
   const { isLoggedIn, isAdmin, logout } = useLogin();
+
   const [activeTab, setActiveTab] = useState('products');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [products, setProducts] = useState([]);
@@ -51,14 +56,9 @@ function AdminDashboard() {
     }
   });
 
-  useEffect(() => {
-    if (isLoggedIn && isAdmin) {
-      fetchProducts();
-      fetchOrders();
-      fetchSupportSubmissions();
-      fetchInstaCollections();
-    }
-  }, [isLoggedIn, isAdmin]);
+  // ------------------------------------------
+  // ⭐ MOVE ALL FUNCTIONS ABOVE USEEFFECT
+  // ------------------------------------------
 
   const fetchProducts = async () => {
     try {
@@ -76,7 +76,6 @@ function AdminDashboard() {
         where("status", "==", "Paid"),
         orderBy("orderDate", "desc")
       );
-
       const snap = await getDocs(q);
       const ordersList = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setOrders(ordersList);
@@ -150,7 +149,6 @@ function AdminDashboard() {
     }
   };
 
-  /* 🔥 FIXED handleEdit */
   const handleEdit = (product) => {
     setEditingProduct(product);
 
@@ -163,7 +161,7 @@ function AdminDashboard() {
       category: product.category,
       section: product.section,
 
-      useUrl: true,          // IMPORTANT FIX
+      useUrl: true,
       image: null,
       image2: null,
       image3: null,
@@ -171,7 +169,6 @@ function AdminDashboard() {
       imageUrl: product.image,
       image2Url: product.image2 || "",
       image3Url: product.image3 || "",
-
       sizes: product.sizes
     });
   };
@@ -182,6 +179,52 @@ function AdminDashboard() {
       fetchProducts();
     }
   };
+
+  // ---------------------------------------------------------
+  // ⭐ NOW useEffect CAN SAFELY CALL THE FUNCTIONS
+  // ---------------------------------------------------------
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        setFirebaseAdmin(false);
+        return;
+      }
+
+      if (user.email === "ryzensports@gmail.com") {
+        setFirebaseAdmin(true);
+      } else {
+        setFirebaseAdmin(false);
+      }
+    });
+
+    return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn && isAdmin) {
+      fetchProducts();
+      fetchOrders();
+      fetchSupportSubmissions();
+      fetchInstaCollections();
+    }
+  }, [isLoggedIn, isAdmin]);
+
+  // ---------------------------------------------------------
+  // ⭐ UI LOADING + BLOCK
+  // ---------------------------------------------------------
+
+  if (firebaseAdmin === null) {
+    return <div style={{ padding: "30px", textAlign: "center" }}>Checking admin...</div>;
+  }
+
+  if (!firebaseAdmin) {
+    return (
+      <div style={{ padding: "30px", textAlign: "center" }}>
+        <h2>Admin access required</h2>
+      </div>
+    );
+  }
 
   const renderProductsTab = () => (
     <div className="dashboard-content">
