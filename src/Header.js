@@ -123,7 +123,7 @@ function Header() {
           {/* LOGO */}
           <div className="logo" style={{ flex: '0 0 auto', marginRight: '40px' }}>
             <Link to="/">
-              <img src="/images/ryz.png" alt="Ryzen Sport Logo" className="logo-img" style={{ width: '50px',height:'30px', cursor: 'pointer' }} />
+              <img src="/images/ryz.webp" alt="Ryzen Sport Logo" className="logo-img" style={{ width: '50px',height:'30px', cursor: 'pointer' }} />
             </Link>
           </div>
 

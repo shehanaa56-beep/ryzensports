@@ -7,34 +7,46 @@ function ShopByCollection() {
 
   const collections = [
     {
-      img: "/images/s7.png",
+      img: "/images/s7.webp",
       title: "Five Sleeve Jerseys",
-      section: "fivesleeves"
+      section: "fivesleeves",
+      w: 120,
+      h: 120
     },
     {
-      img: "/images/s8.png",
+      img: "/images/s8.webp",
       title: "Full Sleeve Jerseys",
-      section: "fullsleeves"
+      section: "fullsleeves",
+      w: 120,
+      h: 120
     },
     {
-      img: "/images/s1.png",
+      img: "/images/s1.webp",
       title: "Black Friday sale 2025",
-      section: "blackfriday"
+      section: "blackfriday",
+      w: 120,
+      h: 120
     },
     {
-      img: "/images/s2.png",
+      img: "/images/s2.webp",
       title: "Embroidery collection",
-      section: "embroidery"
+      section: "embroidery",
+      w: 120,
+      h: 120
     },
     {
-      img: "/images/s3.png",
+      img: "/images/s3.webp",
       title: "Goat Tour INDIA Special",
-      section: "goattour"
+      section: "goattour",
+      w: 120,
+      h: 120
     },
     {
-      img: "/images/s9.png",
+      img: "/images/s9.webp",
       title: "World cup 2026 collection",
-      section: "worldcup"
+      section: "worldcup",
+      w: 120,
+      h: 120
     },
   ];
 
@@ -55,8 +67,17 @@ function ShopByCollection() {
             style={{ cursor: "pointer" }}
           >
             <div className="collection-img">
-              <img src={item.img} alt={item.title} />
+              <img 
+                src={item.img}
+                alt={item.title}
+                width={item.w}
+                height={item.h}
+                loading="lazy"      // ⭐ improves performance drastically
+                decoding="async"     // ⭐ faster rendering
+                style={{ borderRadius: "50%" }}
+              />
             </div>
+
             <p>{item.title}</p>
           </div>
         ))}
