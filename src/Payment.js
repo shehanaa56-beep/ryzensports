@@ -19,7 +19,7 @@ const Payment = ({ onSuccess, cartItems, loggedInUser }) => {
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.defer = true;
+    script.async = true; 
     document.body.appendChild(script);
     return () => document.body.removeChild(script);
   }, []);
