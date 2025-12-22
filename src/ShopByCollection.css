@@ -11,16 +11,12 @@
 
 /* Heading */
 .shop-collection h2 {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 20px;
   font-weight: 700;
-  color: #111;
-
-  /* ⭐ KEY PART */
-  letter-spacing: -0.04em;   /* same feel as About Us Collection */
-  line-height: 1.2;
-
   margin-bottom: 28px;
+  color: #111;
+  letter-spacing: -0.2px; /* 👈 tight like reference */
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 /* -------------------------------
