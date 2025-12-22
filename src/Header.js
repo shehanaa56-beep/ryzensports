@@ -99,12 +99,12 @@ function Header() {
   const navLinkStyle = {
     color: '#000',
     textDecoration: 'none',
-    fontWeight: '500',
-    fontSize: '14px',
+    fontWeight: '600',
+    fontSize: '17px',
     padding: '8px 12px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    whiteSpace: 'nowrap'
+    letterSpacing: '0.7px',
+    whiteSpace: 'nowrap',
+    fontFamily: 'times new roman, serif',
   };
 
   return (
@@ -130,11 +130,11 @@ function Header() {
           {/* DESKTOP NAV */}
           <nav className="desktop-nav" style={{ flex: 1, justifyContent: 'center' }}>
             <ul style={{ display: 'flex', listStyle: 'none', margin: 0, padding: 0, gap: '35px' }}>
-              <li><Link to="/" style={navLinkStyle}>HOME</Link></li>
-              <li><Link to="/sizechart" style={navLinkStyle}>SIZECHART</Link></li>
+              <li><Link to="/" style={navLinkStyle}>Home</Link></li>
+              <li><Link to="/sizechart" style={navLinkStyle}>Sizechart</Link></li>
               <li><Link to="/faq" style={navLinkStyle}>FAQ</Link></li>
-              <li><Link to="/customer-support" style={navLinkStyle}>CUSTOMER SUPPORT</Link></li>
-              <li><Link to="/outlet" style={navLinkStyle}>OUTLET</Link></li>
+              <li><Link to="/customer-support" style={navLinkStyle}>Customer Support</Link></li>
+              <li><Link to="/outlet" style={navLinkStyle}>Outlet</Link></li>
             </ul>
           </nav>
 

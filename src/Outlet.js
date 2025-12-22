@@ -158,7 +158,7 @@ function Outlet() {
 
   const renderSelectedSection = () => {
     if (selectedSection === "fullsleeves") {
-      return <SectionBlock title="FULLSLEEVE'S" list={fullSleeves} />;
+      return <SectionBlock title="Fullsleeve's" list={fullSleeves} />;
     }
     if (selectedSection === "halfsleeves") {
       return <SectionBlock title="HALFSLEEVE'S" list={halfSleeves} />;
@@ -169,7 +169,7 @@ function Outlet() {
 
     return (
       <>
-        <SectionBlock title="FULLSLEEVE'S" list={fullSleeves} />
+        <SectionBlock title="Fullsleeve's" list={fullSleeves} />
         <SectionBlock title="HALFSLEEVE'S" list={halfSleeves} />
         <SectionBlock title="OVERSIZED" list={oversized} />
       </>
@@ -178,8 +178,8 @@ function Outlet() {
 
   return (
     <div style={{ backgroundColor: "#fff", color: "#312d2dff", minHeight: "100vh" }}>
-      <section className="header-banner" style={{fontFamily:'times new roman',fontSize:'.8rem',fontWeight:'700',textTransform:'uppercase'}}>
-        <h1>JERSEY, HALF SLEEVE AND FULL SLEEVE: UP TO 60% OFF</h1>
+      <section className="header-banner" style={{fontFamily:'times new roman',fontSize:'.8rem',fontWeight:'700'}}>
+        <h1>Jersey, Half Sleeve And Full Sleeve: Up To 60% OFF</h1>
         <p>[{filteredProducts.length}]</p>
       </section>
 
