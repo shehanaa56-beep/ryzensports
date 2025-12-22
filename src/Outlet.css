@@ -6,8 +6,7 @@
 
 .section-title {
   text-align: center;
-  font-size: 1.5rem;
-  font-family:'Times New Roman', Times, serif;
+  font-size: 1.3rem;
   color: #222;
   margin-bottom: 25px;
 }
@@ -309,4 +308,44 @@
   border-radius: 10px;
   border: none;
   font-size: 15px;
+}
+/* ================================
+   PRODUCT TYPOGRAPHY (EXACT MATCH)
+================================ */
+
+/* Product Name */
+.outlet-name {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  color: #111;
+}
+
+/* Product Category */
+.outlet-category {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #555;
+}
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  background: #f7eded;
+  color: #000000;
+
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+
+  padding: 3px 7px;
+  border-radius: 4px;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }

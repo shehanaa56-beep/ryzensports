@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from './firebase';
-import "./Outlet.css"; // ⭐ reuse same styles for scroll + view-all button
 
 function Collection() {
   const navigate = useNavigate();
@@ -136,7 +135,7 @@ function Collection() {
             fontSize: "1.2rem",
             fontWeight: "700",
             textTransform: "uppercase",
-            fontFamily:'times new roman'
+            fontFamily: "'Poppins', system-ui, sans-serif"
           }}
         >
           BEST SELLER
@@ -281,26 +280,35 @@ function Collection() {
                   borderTop: "1px solid #333",
                 }}
               >
-                <h3
-                  style={{
-                    fontSize: "0.9rem",
-                    fontWeight: "700",
-                    color: "#0a0a0aff",
-                    marginBottom: "4px",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {product.name}
-                </h3>
-                <p
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "#1d1b1bff",
-                    marginBottom: "6px",
-                  }}
-                >
-                  {product.category}
-                </p>
+<h3
+  style={{
+    fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+    fontSize: "0.8rem",
+    fontWeight: "600",
+    letterSpacing: "0.06em",
+    color: "#000",
+    marginBottom: "4px",
+  }}
+>
+  {product.name}
+</h3>
+
+
+<p
+  style={{
+    fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+    fontSize: "0.5rem",
+    fontWeight: "500",
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+    color: "#666",
+    marginBottom: "6px",
+  }}
+>
+  {product.category}
+</p>
+
+
 
                 <div
                   style={{
@@ -314,8 +322,8 @@ function Collection() {
                   <span
                     style={{
                       color: "#c7ad38ff",
-                      fontWeight: "700",
-                      fontSize: "1rem",
+                      fontWeight: "300",
+                      fontSize: ".7rem",
                     }}
                   >
                     {product.currentPrice.replace("₹", "")}
@@ -325,7 +333,7 @@ function Collection() {
                     style={{
                       textDecoration: "line-through",
                       color: "#534e4eff",
-                      fontSize: "0.9rem",
+                      fontSize: "0.7rem",
                     }}
                   >
                     {product.originalPrice.replace("₹", "")}
@@ -336,7 +344,7 @@ function Collection() {
                       backgroundColor: "#e0ceceff",
                       color: "#000",
                       fontWeight: "700",
-                      fontSize: "0.8rem",
+                      fontSize: "0.7rem",
                       padding: "2px 6px",
                       borderRadius: "4px",
                     }}

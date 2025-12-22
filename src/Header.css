@@ -4,7 +4,7 @@
 .header {
   background-color: #fff;
   color: #0b0909;
-  padding: 15px 30px;
+  padding: 22px 30px;
   position: fixed;
   top: 0;
   left: 0;
@@ -28,7 +28,7 @@
   flex: 0 0 auto;
 }
 .logo img {
-  height: 45px;
+  height: 55px;
   margin-left: -10px; /* Slightly closer to left edge */
 }
 
@@ -130,70 +130,38 @@
    📱 Mobile (Equal 10px Spacing)
 =============================== */
 @media (max-width: 768px) {
+
   .header {
-    padding: 10px 15px;
+    padding: 16px 16px;
   }
 
-  .header-container {
-    gap: 0;
+  .logo img {
+    height: 40px;
   }
 
   .desktop-nav {
     display: none;
   }
 
-  /* ✅ Hamburger more visible */
-  .hamburger {
-    display: flex;
-    order: 3;
-    padding: 11px;
-    gap: 4px;
-  }
-
-  .hamburger span {
-    width: 25px;
-    height: 4px;
-    background-color: #000;
-    border-radius: 2px;
-  }
-
-  .logo {
-    order: 0;
-  }
-
-  .logo img {
-    height: 28px;
-    margin-left: -10px;
-  }
-
-  /* ✅ Equal spacing: heart, bag, menu (10px each) */
   .right-section {
-    order: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px; /* 👈 equal distance between icons */
+    gap: 14px;
   }
 
-
-
-  .hamburger {
-    order: 2;
+  .header-icon {
+    font-size: 20px;
   }
 
-  .desktop-login {
-    display: none;
+  .hamburger-icon {
+    display: block;
+    font-size: 28px;
   }
 
-  .desktop-home-icon {
-    display: none;
-  }
-
-  /* Compact search bar */
+  /* Search input on mobile */
   .search-input {
-    width: 90px;
-    font-size: 13px;
-    padding: 5px 8px;
-    border-radius: 15px;
+    width: 92vw;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 48px;
   }
 
   .icon {
@@ -201,18 +169,18 @@
     height: 18px;
   }
 
-  .mobile-menu {
-    background-color: #fff;
-    color: #000;
-    position: absolute;
-    top: 50px;
-    left: 0;
-    right: 0;
-    z-index: 1001;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    animation: slideDown 0.3s ease-in-out;
-    padding-bottom: 20px;
-  }
+.mobile-menu {
+  background: #fff;
+  position: absolute;
+  top: 70px;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  padding: 18px 0;
+}
+
 
   .mobile-menu nav ul {
     list-style: none;
@@ -308,4 +276,120 @@
 }
 .search-input::placeholder {
   color: #000 !important;
+}
+/* ⭐ Match CurlyCase Typography */
+.header,
+.desktop-nav a,
+.mobile-menu a,
+.mobile-cat-btn,
+.mobile-login-btn,
+.search-input {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+/* =========================
+   CurlyCase Style Search
+========================= */
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Search input dropdown */
+.search-input {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 220px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+  background: #fff;
+  z-index: 1001;
+  animation: searchFade 0.2s ease;
+}
+
+@keyframes searchFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Focus style */
+.search-input:focus {
+  border-color: #2e7d64;
+  box-shadow: 0 0 0 2px rgba(46, 125, 100, 0.15);
+}
+/* Bootstrap hamburger */
+.hamburger-icon {
+  font-size: 26px;
+  color: #000;
+  cursor: pointer;
+  display: none;
+}
+/* Hide desktop login on mobile */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .hamburger-icon {
+    display: block;
+  }
+}
+/* Force header icons to black */
+.header-icon i,
+.hamburger-icon {
+  color: #000 !important;
+}
+.header-icon i:hover,
+.hamburger-icon:hover {
+  color: #2e7d64; /* green on hover */
+}
+/* =========================
+   Smaller icons on mobile
+========================= */
+@media (max-width: 768px) {
+
+  /* Header icons (search, heart, bag) */
+  .header-icon i {
+    font-size: 18px;   /* 👈 adjust if needed (16–18 is ideal) */
+  }
+
+  /* Menu icon */
+  .hamburger-icon {
+    font-size: 22px;   /* 👈 slightly bigger than others */
+  }
+
+  /* Reduce tap padding slightly */
+  .header-icon,
+  .hamburger-icon {
+    padding: 4px;
+  }
+}
+/* =========================
+   Reduce icon gap on mobile
+========================= */
+@media (max-width: 768px) {
+
+  /* Reduce space between icons */
+  .right-section {
+    gap: 2px; /* tight & clean */
+  }
+
+  /* Reduce extra padding around icons */
+  .header-icon,
+  .hamburger-icon {
+    padding: 2px;
+  }
 }

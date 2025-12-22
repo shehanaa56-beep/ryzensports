@@ -96,16 +96,16 @@ function Header() {
   }, [searchTerm]);
 
 
-  const navLinkStyle = {
-    color: '#000',
-    textDecoration: 'none',
-    fontWeight: '600',
-    fontSize: '17px',
-    padding: '8px 12px',
-    letterSpacing: '0.7px',
-    whiteSpace: 'nowrap',
-    fontFamily: 'times new roman, serif',
-  };
+const navLinkStyle = {
+  color: '#000',
+  textDecoration: 'none',
+  fontWeight: '500',
+  fontSize: '15px',
+  padding: '8px 12px',
+  letterSpacing: '0.3px',
+  whiteSpace: 'nowrap',
+  fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+};
 
   return (
     <>
@@ -123,7 +123,7 @@ function Header() {
           {/* LOGO */}
           <div className="logo" style={{ flex: '0 0 auto', marginRight: '40px' }}>
             <Link to="/">
-              <img src="/images/ryz.webp" alt="Ryzen Sport Logo" className="logo-img" style={{ width: '50px',height:'30px', cursor: 'pointer' }} />
+              <img src="/images/ryzen.png" alt="Ryzen Sport Logo" className="logo-img" style={{ width: '50px',height:'30px', cursor: 'pointer' }} />
             </Link>
           </div>
 
@@ -139,65 +139,81 @@ function Header() {
           </nav>
 
           {/* RIGHT SECTION */}
-          <div className="right-section" style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+         {/* RIGHT SECTION */}
+<div
+  className="right-section"
+  style={{
+    flex: '0 0 auto',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+  }}
+>
 
-            <div style={{ position: 'relative' }} ref={searchRef}>
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value); setShowResults(true); }}
-                onFocus={() => setShowResults(true)}
-                className="search-input"
-                style={{ background: 'transparent', border: '1px solid #333', borderRadius: '20px', color: '#040404ff' }}
-              />
+  {/* SEARCH + WISHLIST */}
+  <div className="search-wrapper" ref={searchRef}>
+    <i
+      className="bi bi-search header-icon"
+      onClick={() => setShowResults((prev) => !prev)}
+    ></i>
 
-              {/* ⭐ UPDATED: Pass NEW searchResults structure */}
-              {showResults && searchTerm && (
-                <SearchResults
-                  results={searchResults}
-                  onClose={() => { setShowResults(false); setSearchTerm(''); }}
-                />
-              )}
+    {showResults && (
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        autoFocus
+        className="search-input"
+      />
+    )}
 
-              {/* WISHLIST */}
-              <Link to="/wishlist">
-                <svg className="icon" viewBox="0 0 24 24">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#000" strokeWidth="2" fill="none" />
-                </svg>
-              </Link>
-            </div>
+    {showResults && searchTerm && (
+      <SearchResults
+        results={searchResults}
+        onClose={() => {
+          setShowResults(false);
+          setSearchTerm('');
+        }}
+      />
+    )}
 
-            {/* CART */}
-            <Link to="/cart" style={{ position: 'relative' }}>
-              <svg className="icon" viewBox="0 0 24 24">
-                <path d="M6 2L3 6v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke="#000" strokeWidth="2" fill="none" />
-                <line x1="3" y1="6" x2="21" y2="6" stroke="#000" strokeWidth="2" />
-                <path d="M16 10a4 4 0 0 1-8 0" stroke="#000" strokeWidth="2" />
-              </svg>
+    <Link to="/wishlist" className="header-icon">
+      <i className="bi bi-heart"></i>
+    </Link>
+  </div>
 
-              {cartItems.length > 0 && (
-                <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'red', color: '#000', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {cartItems.length}
-                </span>
-              )}
-            </Link>
+  {/* CART */}
+  <Link to="/cart" className="header-icon cart-icon">
+    <i className="bi bi-bag"></i>
+    {cartItems.length > 0 && (
+      <span className="cart-count">{cartItems.length}</span>
+    )}
+  </Link>
 
-            {/* LOGIN */}
-            <div className="desktop-login">
-              {isLoggedIn && isAdmin && <Link to="/admin" style={{ color: '#000', textDecoration: 'none' }}>Admin</Link>}
+  {/* MENU ICON */}
+  <i
+    className="bi bi-list hamburger-icon"
+    onClick={() => setIsMenuOpen(!isMenuOpen)}
+  ></i>
 
-              <button onClick={isLoggedIn ? logout : openModal} style={{ background: 'none', border: 'none', color: '#000', cursor: 'pointer' }}>
-                {isLoggedIn ? 'Logout' : 'Login'}
-              </button>
-            </div>
-          </div>
+  {/* DESKTOP LOGIN (hidden on mobile via CSS) */}
+  <div className="desktop-login desktop-only">
+    {isLoggedIn && isAdmin && (
+      <Link to="/admin" style={{ color: '#000', textDecoration: 'none' }}>
+        Admin
+      </Link>
+    )}
 
-          {/* MOBILE MENU ICON */}
-          <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <span></span><span></span><span></span>
-          </div>
+    <button
+      onClick={isLoggedIn ? logout : openModal}
+      style={{ background: 'none', border: 'none', color: '#000', cursor: 'pointer' }}
+    >
+      {isLoggedIn ? 'Logout' : 'Login'}
+    </button>
+  </div>
 
+</div>
         </div>
       </header>
 

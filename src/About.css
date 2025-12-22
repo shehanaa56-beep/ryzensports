@@ -17,20 +17,21 @@
   font-weight: 900;
   margin-bottom: 40px;
   letter-spacing: 2px;
-  text-transform: uppercase;
   background: linear-gradient(135deg, #8d8989 0%, #271f1f 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  font-family: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
 }
 
 .about-text {
-  font-size: 20px;
+  font-size: 10px;
   line-height: 1.8;
   max-width: 800px;
   margin: 0 auto;
   color: #312c2c;
-  font-weight: 400;
+  font-weight: 100;
+   font-family: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
 }
 
 /* Responsive Design */
@@ -52,7 +53,7 @@
   }
 
   .about-text {
-    font-size: 18px;
+    font-size: 14px;
   }
 }
 

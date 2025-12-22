@@ -8,8 +8,7 @@
 }
 
 .testimonials h2 {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 1rem;
   color: #111;
   margin-bottom: 0.5rem;
   font-family: 'Times New Roman', Times, serif;
@@ -17,7 +16,7 @@
 
 .subtitle {
   color: #666;
-  font-size: 1.05rem;
+  font-size: 1rem;
   margin-bottom: 2.5rem;
 }
 

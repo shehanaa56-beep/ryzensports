@@ -81,7 +81,8 @@ function Outlet() {
         <div className="outlet-img">
           <img src={product.image} alt={product.name} />
 
-          {discount > 0 && <span className="discount-badge">{discount}%</span>}
+          {discount > 0 && <span className="discount-badge">SALE</span>}
+
 
           <button
             className="wishlist-btn"
@@ -113,13 +114,91 @@ function Outlet() {
         </div>
 
         <div className="outlet-info">
-          <h3 className="outlet-name">{product.name}</h3>
-          <p className="outlet-category">{product.category}</p>
+            <h3
+    className="outlet-name"
+    style={{
+      fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+      fontWeight: 500,
+      letterSpacing: "0.06em",
+      fontSize: "0.8rem",
+      color: "#111",
+      marginBottom: "4px",
+      textAlign: "center",
+    }}
+  >
+    {product.name}
+  </h3>
+            <p
+    className="outlet-category"
+    style={{
+      fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+      fontWeight: 500,
+      letterSpacing: "0.06em",
+      textTransform: "uppercase",
+      fontSize: "0.7rem",
+      color: "#555",
+      marginBottom: "8px",
+      textAlign: "center",
+    }}
+  >
+    {product.category}
+  </p>
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    marginTop: "6px",
+    whiteSpace: "nowrap",
+  }}
+>
+  {/* Current Price */}
+  <span
+    style={{
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontWeight: 800,
+      fontSize: ".7rem",
+      color: "#c9a227", // gold/yellow
+    }}
+  >
+    {product.currentPrice}
+  </span>
 
-          <div className="price-row">
-            <span className="current-price">₹{product.currentPrice}</span>
-            <span className="original-price">₹{product.originalPrice}</span>
-          </div>
+  {/* Original Price */}
+  <span
+    style={{
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontWeight: 600,
+      fontSize: "0.7rem",
+      color: "#8b8b8b",
+      textDecoration: "line-through",
+    }}
+  >
+    {product.originalPrice}
+  </span>
+
+  {/* Discount Badge */}
+  {product.originalPrice && product.currentPrice && (
+    <span
+      style={{
+        backgroundColor: "#e8dede",
+        color: "#000",
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontWeight: 700,
+        fontSize: "0.7rem",
+        padding: "2px 8px",
+        borderRadius: "8px",
+      }}
+    >
+      {Math.round(
+        ((product.originalPrice - product.currentPrice) / product.originalPrice) * 100
+      )}
+      %
+    </span>
+  )}
+</div>
+
         </div>
       </Link>
     );
@@ -128,7 +207,17 @@ function Outlet() {
   // SECTION BLOCK
   const SectionBlock = ({ title, list }) => (
     <div className="outlet-section">
-      <h2 className="section-title">{title}</h2>
+     <h2
+  className="section-title"
+  style={{
+fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+    fontWeight: 500,
+    letterSpacing: "0.04em",
+  }}
+>
+  {title}
+</h2>
+
 
       {!viewAll ? (
         <>
@@ -178,9 +267,13 @@ function Outlet() {
 
   return (
     <div style={{ backgroundColor: "#fff", color: "#312d2dff", minHeight: "100vh" }}>
-      <section className="header-banner" style={{fontFamily:'times new roman',fontSize:'.8rem',fontWeight:'700'}}>
-        <h1>Jersey, Half Sleeve And Full Sleeve: Up To 60% OFF</h1>
-        <p>[{filteredProducts.length}]</p>
+      <section className="header-banner" style={{
+  fontFamily: "'Playfair Display', serif",
+  fontSize: ".6rem",
+  fontWeight: 500,textAlign:"center",
+}}
+>
+        <h1>Jerseys, Half & Full Sleeves — Up to 60% OFF</h1>
       </section>
 
       <div className="filter-box">

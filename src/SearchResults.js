@@ -30,59 +30,71 @@ function SearchResults({ results, onClose }) {
     }
   };
 
-  return (
-    <div className="search-box">
+  
+return (
+  <div className="search-box">
 
-      {/* ⭐ SUGGESTIONS SECTION */}
-      {suggestions.length > 0 && (
-        <>
-          <h4 className="sr-title">SUGGESTIONS</h4>
+    {/* ⭐ SUGGESTIONS SECTION */}
+    {suggestions.length > 0 && (
+      <>
+        <h4 className="sr-title">
+          <i className="bi bi-search sr-title-icon"></i>
+          SUGGESTIONS
+        </h4>
 
-          {suggestions.map((text, i) => (
-            <div
-              key={i}
-              className="sr-suggestion"
-              onClick={() => goToSection(text)}
-            >
-              {text}
-            </div>
-          ))}
-        </>
-      )}
+        {suggestions.map((text, i) => (
+          <div
+            key={i}
+            className="sr-suggestion"
+            onClick={() => goToSection(text)}
+          >
+            <i className="bi bi-arrow-right-circle"></i>
+            <span>{text}</span>
+          </div>
+        ))}
+      </>
+    )}
 
-      {/* ⭐ PRODUCTS SECTION */}
-      {products.length > 0 && (
-        <>
-          <h4 className="sr-title">PRODUCTS</h4>
+    {/* ⭐ PRODUCTS SECTION */}
+    {products.length > 0 && (
+      <>
+        <h4 className="sr-title">
+          <i className="bi bi-bag sr-title-icon"></i>
+          PRODUCTS
+        </h4>
 
-          {products.map((p, index) => (
-            <div
-              key={p.id || index}
-              className="sr-product"
-              onClick={() => goToProduct(p.id)}
-            >
-              <img
-                src={p.image || "/images/default.png"}
-                alt="product"
-                className="sr-product-img"
-              />
+        {products.map((p, index) => (
+          <div
+            key={p.id || index}
+            className="sr-product"
+            onClick={() => goToProduct(p.id)}
+          >
+            <img
+              src={p.image || "/images/default.png"}
+              alt="product"
+              className="sr-product-img"
+            />
 
-              <div className="sr-product-info">
-                <div className="sr-product-name">
-                  {p.category}
-                </div>
+            <div className="sr-product-info">
+              <div className="sr-product-name">
+                <i className="bi bi-box-seam"></i>
+                {p.category}
               </div>
             </div>
-          ))}
-        </>
-      )}
+          </div>
+        ))}
+      </>
+    )}
 
-      {/* ❌ No Results */}
-      {suggestions.length === 0 && products.length === 0 && (
-        <div className="no-results">No products found</div>
-      )}
-    </div>
-  );
+    {/* ❌ No Results */}
+    {suggestions.length === 0 && products.length === 0 && (
+      <div className="no-results">
+        <i className="bi bi-emoji-frown"></i> No products found
+      </div>
+    )}
+  </div>
+);
+
 }
 
 export default SearchResults;
