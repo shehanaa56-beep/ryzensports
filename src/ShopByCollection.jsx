@@ -43,7 +43,7 @@ function ShopByCollection() {
     },
     {
       img: "/images/s9.webp",
-      title: "World cup 2026 collection",
+      title: "World cup collection",
       section: "worldcup",
       w: 120,
       h: 120
