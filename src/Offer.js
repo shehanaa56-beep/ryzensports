@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 
 function Offer() {
   const messages = [
-    "Free Shipping On Orders Above ₹4999",
+    "Free Shipping For ALL",
     "New Arrivals Just Dropped!",
-    "Limited EDITION COLLECTION AVAILABLE NOW"
+    "LIMITED EDITION COLLECTION AVAILABLE NOW"
   ];
 
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);

@@ -22,8 +22,8 @@ function ShopByCollection() {
     },
     {
       img: "/images/s1.webp",
-      title: "Black Friday sale 2025",
-      section: "blackfriday",
+      title: "HALFSLEEVES JERSEYS",
+      section: "halfsleeves",
       w: 120,
       h: 120
     },
