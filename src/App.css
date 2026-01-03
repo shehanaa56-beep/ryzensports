@@ -1,7 +1,7 @@
 /* Offer Bar */
 .offer-bar {
-  background-color: rgb(177, 231, 241);
-  color: #0c0e0b;
+  background-color: rgb(29, 130, 51);
+  color: #f7faf5;
   text-align: center;
   padding: 10px 0;
   font-size: 14px;
@@ -158,7 +158,7 @@
   position: relative;
   width: 100%;
   height: 80vh;
-  background-image: url('../public/images/web.webp'); /* Placeholder for Indian women's cricket team */
+  background-image: url('../public/images/1.png'); /* Placeholder for Indian women's cricket team */
   background-size: cover;
   background-position: center;
   display: flex;
