@@ -528,6 +528,17 @@ function AdminDashboard() {
                 <p>Original: {product.originalPrice}</p>
                 <p>Discount: {product.discount}</p>
 
+                <div className="sizes-display">
+                  <h4>Stock by Size:</h4>
+                  <div className="sizes-list">
+                    {Object.entries(product.sizes || {}).map(([size, qty]) => (
+                      <span key={size} className="size-stock">
+                        {size}: {qty}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="product-actions">
                   <button
                     onClick={() => handleEdit(product)}
@@ -569,9 +580,9 @@ function AdminDashboard() {
 
               <div className="order-details">
                 <p>
-                  <strong>Date:</strong>{" "}
-                  {order.createdAt
-                    ? new Date(order.createdAt.toDate()).toLocaleDateString()
+                  <strong>Order Date:</strong>{" "}
+                  {order.orderDate
+                    ? new Date(order.orderDate.toDate()).toLocaleDateString()
                     : "N/A"}
                 </p>
 
@@ -589,6 +600,7 @@ function AdminDashboard() {
                     {order.items?.map((item, i) => (
                       <li key={i}>
                         {item.name} x {item.quantity}
+                        {item.size && ` (Size: ${item.size})`}
                       </li>
                     ))}
                   </ul>
